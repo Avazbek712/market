@@ -32,5 +32,4 @@ public class User extends AbsEntity {
     @JoinColumn(name = "role_id")
     private Role role;
 
-
 }
