@@ -1,0 +1,46 @@
+{
+  "common": {
+    "appName": "MiniMarket",
+    "logout": "Выйти"
+  },
+  "auth": {
+    "login": {
+      "title": "Вход",
+      "emailLabel": "Email",
+      "passwordLabel": "Пароль",
+      "submit": "Войти",
+      "submitting": "Входим…",
+      "noAccount": "Нет аккаунта?",
+      "registerLink": "Зарегистрироваться",
+      "registeredSuccess": "Регистрация прошла успешно — войдите, чтобы продолжить."
+    },
+    "register": {
+      "title": "Регистрация",
+      "fullNameLabel": "Имя",
+      "emailLabel": "Email",
+      "passwordLabel": "Пароль",
+      "roleLabel": "Роль",
+      "roleBuyer": "Покупатель",
+      "roleSeller": "Продавец",
+      "submit": "Зарегистрироваться",
+      "submitting": "Регистрируем…",
+      "haveAccount": "Уже есть аккаунт?",
+      "loginLink": "Войти"
+    }
+  },
+  "dashboard": {
+    "buyer": {
+      "title": "Дашборд покупателя",
+      "subtitle": "Здесь появятся ваши заказы и покупки."
+    },
+    "seller": {
+      "title": "Дашборд продавца",
+      "subtitle": "Здесь появятся ваши товары и продажи."
+    },
+    "admin": {
+      "title": "Дашборд администратора",
+      "subtitle": "Здесь появятся инструменты администрирования.",
+      "manageRoles": "Управление ролями"
+    }
+  }
+}
