@@ -1,0 +1,46 @@
+{
+  "common": {
+    "appName": "MiniMarket",
+    "logout": "Log out"
+  },
+  "auth": {
+    "login": {
+      "title": "Log in",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "submit": "Log in",
+      "submitting": "Logging in…",
+      "noAccount": "No account?",
+      "registerLink": "Register",
+      "registeredSuccess": "Registration successful — log in to continue."
+    },
+    "register": {
+      "title": "Register",
+      "fullNameLabel": "Full name",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "roleLabel": "Role",
+      "roleBuyer": "Buyer",
+      "roleSeller": "Seller",
+      "submit": "Register",
+      "submitting": "Registering…",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Log in"
+    }
+  },
+  "dashboard": {
+    "buyer": {
+      "title": "Buyer dashboard",
+      "subtitle": "Your orders and purchases will show up here."
+    },
+    "seller": {
+      "title": "Seller dashboard",
+      "subtitle": "Your listings and sales will show up here."
+    },
+    "admin": {
+      "title": "Admin dashboard",
+      "subtitle": "Administration tools will show up here.",
+      "manageRoles": "Manage roles"
+    }
+  }
+}
