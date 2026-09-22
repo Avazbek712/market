@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
             throw new EmailAlreadyExistsException(dto.getEmail());
         }
 
-        Role role = roleRepository.findByName(dto.getRole())
+        Role role = roleRepository.findByNameWithPermissions(dto.getRole())
                 .orElseThrow(() -> new RuntimeException("Role not configured: " + dto.getRole()));
 
         User user = new User();
