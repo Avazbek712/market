@@ -46,9 +46,7 @@ services:
     restart: unless-stopped
 
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/avazbek712/market:latest
     container_name: minimarket-backend
     environment:
       DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
