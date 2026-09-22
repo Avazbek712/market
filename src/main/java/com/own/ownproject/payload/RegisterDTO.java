@@ -18,7 +18,8 @@ public class RegisterDTO {
     private String email;
 
     @NotBlank(message = "Password must not be empty")
-    @Size(min = 8, message = "Password must be at least 8 characters long")
+    // 72 максимум для Bcrypt
+    @Size(min = 8, max = 72, message = "Password must be between 8 and 72 characters")
     private String password;
 
     @NotBlank(message = "Full name must not be empty")
