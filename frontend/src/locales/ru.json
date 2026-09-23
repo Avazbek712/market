@@ -6,6 +6,7 @@
   "auth": {
     "login": {
       "title": "Вход",
+      "subtitle": "С возвращением! Введите свои данные, чтобы продолжить.",
       "emailLabel": "Email",
       "passwordLabel": "Пароль",
       "submit": "Войти",
@@ -16,6 +17,7 @@
     },
     "register": {
       "title": "Регистрация",
+      "subtitle": "Создайте аккаунт, чтобы покупать или продавать.",
       "fullNameLabel": "Имя",
       "emailLabel": "Email",
       "passwordLabel": "Пароль",

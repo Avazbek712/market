@@ -6,6 +6,7 @@
   "auth": {
     "login": {
       "title": "Log in",
+      "subtitle": "Welcome back — enter your details to continue.",
       "emailLabel": "Email",
       "passwordLabel": "Password",
       "submit": "Log in",
@@ -16,6 +17,7 @@
     },
     "register": {
       "title": "Register",
+      "subtitle": "Create an account to start shopping or selling.",
       "fullNameLabel": "Full name",
       "emailLabel": "Email",
       "passwordLabel": "Password",
