@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
+import CategoryManager from '../components/CategoryManager'
 import DashboardLayout from '../components/DashboardLayout'
 
 export default function AdminDashboard() {
@@ -34,6 +35,12 @@ export default function AdminDashboard() {
           </button>
         )}
       </div>
+
+      {hasPermission('CATEGORY_MANAGE') && (
+        <div className="mt-6">
+          <CategoryManager />
+        </div>
+      )}
     </DashboardLayout>
   )
 }
