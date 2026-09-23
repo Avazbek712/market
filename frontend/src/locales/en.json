@@ -33,6 +33,26 @@
       "loginLink": "Log in"
     }
   },
+  "errors": {
+    "INVALID_CREDENTIALS": "Incorrect email or password.",
+    "ACCESS_DENIED": "You don't have permission to do that.",
+    "EMAIL_ALREADY_EXISTS": "This email is already registered.",
+    "INVALID_ROLE": "This role can't be used for registration.",
+    "USER_NOT_FOUND": "User not found.",
+    "DUPLICATE_DATA": "This data already exists.",
+    "INTERNAL_ERROR": "Something went wrong on our end. Please try again.",
+    "ILLEGAL_STATE": "This action isn't possible right now.",
+    "VALIDATION_ERROR": "Please check the highlighted fields.",
+    "USERNAME_REQUIRED": "Email is required.",
+    "PASSWORD_REQUIRED": "Password is required.",
+    "EMAIL_REQUIRED": "Email is required.",
+    "EMAIL_INVALID": "Enter a valid email address.",
+    "PASSWORD_LENGTH": "Password must be between 8 and 72 characters.",
+    "FULL_NAME_REQUIRED": "Full name is required.",
+    "ROLE_REQUIRED": "Role is required.",
+    "ROLE_INVALID": "Role must be either buyer or seller.",
+    "GENERIC": "Something went wrong, please try again."
+  },
   "dashboard": {
     "buyer": {
       "title": "Buyer dashboard",
