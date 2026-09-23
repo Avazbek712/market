@@ -5,6 +5,7 @@ import { extractErrorMessage } from '../api/errors'
 import { useAuth } from '../auth/AuthContext'
 import { DASHBOARD_PATH } from '../auth/roles'
 import AuthCard from '../components/AuthCard'
+import { MailIcon, LockIcon } from '../components/FieldIcons'
 import FormField from '../components/FormField'
 import LanguageSwitcher from '../components/LanguageSwitcher'
 import SubmitButton from '../components/SubmitButton'
@@ -36,10 +37,10 @@ export default function LoginPage() {
 
   return (
     <div className="relative">
-      <div className="absolute right-4 top-4">
+      <div className="absolute right-4 top-4 z-20">
         <LanguageSwitcher />
       </div>
-      <AuthCard title={t('auth.login.title')}>
+      <AuthCard title={t('auth.login.title')} subtitle={t('auth.login.subtitle')}>
         {justRegistered && (
           <p className="animate-fade-in-up mb-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
             {t('auth.login.registeredSuccess')}
@@ -50,16 +51,22 @@ export default function LoginPage() {
             id="email"
             label={t('auth.login.emailLabel')}
             type="email"
+            icon={<MailIcon />}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            wrapperClassName="animate-fade-in-up"
+            wrapperStyle={{ animationDelay: '80ms' }}
             required
           />
           <FormField
             id="password"
             label={t('auth.login.passwordLabel')}
             type="password"
+            icon={<LockIcon />}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            wrapperClassName="animate-fade-in-up"
+            wrapperStyle={{ animationDelay: '160ms' }}
             required
           />
           {error && (
@@ -67,10 +74,12 @@ export default function LoginPage() {
               {error}
             </p>
           )}
-          <SubmitButton submitting={submitting}>
-            {submitting ? t('auth.login.submitting') : t('auth.login.submit')}
-          </SubmitButton>
-          <p className="mt-5 text-center text-sm text-slate-500">
+          <div className="animate-fade-in-up" style={{ animationDelay: '240ms' }}>
+            <SubmitButton submitting={submitting}>
+              {submitting ? t('auth.login.submitting') : t('auth.login.submit')}
+            </SubmitButton>
+          </div>
+          <p className="animate-fade-in-up mt-5 text-center text-sm text-slate-500" style={{ animationDelay: '300ms' }}>
             {t('auth.login.noAccount')}{' '}
             <Link to="/register" className="font-medium text-accent-600 transition-colors hover:text-accent-700">
               {t('auth.login.registerLink')}
