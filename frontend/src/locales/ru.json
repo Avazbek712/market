@@ -33,6 +33,26 @@
       "loginLink": "Войти"
     }
   },
+  "errors": {
+    "INVALID_CREDENTIALS": "Неверный email или пароль.",
+    "ACCESS_DENIED": "У вас нет прав для этого действия.",
+    "EMAIL_ALREADY_EXISTS": "Этот email уже зарегистрирован.",
+    "INVALID_ROLE": "Эта роль недоступна для регистрации.",
+    "USER_NOT_FOUND": "Пользователь не найден.",
+    "DUPLICATE_DATA": "Такие данные уже существуют.",
+    "INTERNAL_ERROR": "Что-то пошло не так на сервере. Попробуйте ещё раз.",
+    "ILLEGAL_STATE": "Сейчас это действие невозможно.",
+    "VALIDATION_ERROR": "Проверьте выделенные поля.",
+    "USERNAME_REQUIRED": "Введите email.",
+    "PASSWORD_REQUIRED": "Введите пароль.",
+    "EMAIL_REQUIRED": "Введите email.",
+    "EMAIL_INVALID": "Введите корректный email.",
+    "PASSWORD_LENGTH": "Пароль должен быть от 8 до 72 символов.",
+    "FULL_NAME_REQUIRED": "Введите имя.",
+    "ROLE_REQUIRED": "Выберите роль.",
+    "ROLE_INVALID": "Роль должна быть покупатель или продавец.",
+    "GENERIC": "Что-то пошло не так, попробуйте ещё раз."
+  },
   "dashboard": {
     "buyer": {
       "title": "Дашборд покупателя",
