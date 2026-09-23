@@ -51,6 +51,8 @@
     "FULL_NAME_REQUIRED": "Full name is required.",
     "ROLE_REQUIRED": "Role is required.",
     "ROLE_INVALID": "Role must be either buyer or seller.",
+    "CATEGORY_NOT_FOUND": "Category not found.",
+    "CATEGORY_NAME_REQUIRED": "Category name is required.",
     "GENERIC": "Something went wrong, please try again."
   },
   "dashboard": {
@@ -65,7 +67,22 @@
     "admin": {
       "title": "Admin dashboard",
       "subtitle": "Administration tools will show up here.",
-      "manageRoles": "Manage roles"
+      "manageRoles": "Manage roles",
+      "categories": {
+        "title": "Categories",
+        "addButton": "Add category",
+        "nameLabel": "Name",
+        "descriptionLabel": "Description (optional)",
+        "save": "Save",
+        "saving": "Saving…",
+        "cancel": "Cancel",
+        "edit": "Edit",
+        "delete": "Delete",
+        "confirmDelete": "Delete \"{{name}}\"?",
+        "confirmDeleteYes": "Yes, delete",
+        "empty": "No categories yet — add the first one.",
+        "loading": "Loading categories…"
+      }
     }
   }
 }

@@ -1,5 +1,6 @@
 package com.own.ownproject.handler;
 
+import com.own.ownproject.exception.CategoryNotFoundException;
 import com.own.ownproject.exception.EmailAlreadyExistsException;
 import com.own.ownproject.exception.InvalidRoleException;
 import com.own.ownproject.exception.UserNotFoundException;
@@ -29,6 +30,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleIllegalStateException(IllegalStateException exception) {
         log.warn("Illegal state", exception);
         return buildResponse(HttpStatus.BAD_REQUEST, "ILLEGAL_STATE");
+    }
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<?> handleCategoryNotFound(CategoryNotFoundException exception) {
+        return buildResponse(exception.getHttpStatus(), "CATEGORY_NOT_FOUND");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
