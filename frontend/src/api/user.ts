@@ -5,6 +5,7 @@ export type Role = 'BUYER' | 'SELLER' | 'ADMIN'
 export interface Me {
   id: number
   email: string
+  fullName?: string
   role: Role
   permissions: string[]
 }
