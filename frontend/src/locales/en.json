@@ -4,6 +4,9 @@
     "logout": "Log out"
   },
   "auth": {
+    "visual": {
+      "tagline": "A simple marketplace for buyers and sellers — list, browse, and trade with ease."
+    },
     "login": {
       "title": "Log in",
       "subtitle": "Welcome back — enter your details to continue.",
