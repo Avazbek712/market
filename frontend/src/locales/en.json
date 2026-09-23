@@ -21,7 +21,7 @@
     "register": {
       "title": "Register",
       "subtitle": "Create an account to start shopping or selling.",
-      "fullNameLabel": "Full name",
+      "fullNameLabel": "First and last name",
       "emailLabel": "Email",
       "passwordLabel": "Password",
       "roleLabel": "Role",
@@ -68,6 +68,11 @@
       "title": "Admin dashboard",
       "subtitle": "Administration tools will show up here.",
       "manageRoles": "Manage roles",
+      "nav": {
+        "categories": "Categories",
+        "roles": "Roles"
+      },
+      "rolesComingSoon": "Role & permission management is coming soon.",
       "categories": {
         "title": "Categories",
         "addButton": "Add category",

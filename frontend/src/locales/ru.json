@@ -21,7 +21,7 @@
     "register": {
       "title": "Регистрация",
       "subtitle": "Создайте аккаунт, чтобы покупать или продавать.",
-      "fullNameLabel": "Имя",
+      "fullNameLabel": "Имя и Фамилия",
       "emailLabel": "Email",
       "passwordLabel": "Пароль",
       "roleLabel": "Роль",
@@ -68,6 +68,11 @@
       "title": "Дашборд администратора",
       "subtitle": "Здесь появятся инструменты администрирования.",
       "manageRoles": "Управление ролями",
+      "nav": {
+        "categories": "Категории",
+        "roles": "Роли"
+      },
+      "rolesComingSoon": "Управление ролями и правами появится позже.",
       "categories": {
         "title": "Категории",
         "addButton": "Добавить категорию",
