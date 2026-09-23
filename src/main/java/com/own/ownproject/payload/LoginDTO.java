@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoginDTO {
 
-    @NotBlank(message = "Username must not be empty")
+    @NotBlank(message = "USERNAME_REQUIRED")
     private String username;
 
-    @NotBlank(message = "Password must not be empty")
+    @NotBlank(message = "PASSWORD_REQUIRED")
     private String password;
 
 }

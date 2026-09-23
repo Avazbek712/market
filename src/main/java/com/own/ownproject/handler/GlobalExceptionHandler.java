@@ -27,74 +27,68 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<?> handleIllegalStateException(IllegalStateException exception) {
-        return buildResponse(HttpStatus.BAD_REQUEST, "Illegal State : ", exception.getMessage());
+        log.warn("Illegal state", exception);
+        return buildResponse(HttpStatus.BAD_REQUEST, "ILLEGAL_STATE");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationException(MethodArgumentNotValidException exception) {
         List<Map<String, String>> fieldErrors = exception.getBindingResult().getFieldErrors().stream()
-                .map(fe -> Map.of("field", fe.getField(), "message", String.valueOf(fe.getDefaultMessage())))
+                .map(fe -> Map.of("field", fe.getField(), "code", String.valueOf(fe.getDefaultMessage())))
                 .collect(Collectors.toList());
 
-        Map<String, Object> body = errorBody(HttpStatus.BAD_REQUEST, "Validatsiya xatosi: ");
+        Map<String, Object> body = errorBody(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR");
         body.put("fieldErrors", fieldErrors);
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<?> handleAuthenticationException(AuthenticationException exception) {
-        // Foydalanuvchi mavjudligini oshkor qilmaslik uchun umumiy xabar
-        return buildResponse(HttpStatus.UNAUTHORIZED, "Login yoki parol noto‘g‘ri");
+        return buildResponse(HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS");
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException exception) {
-        return buildResponse(HttpStatus.FORBIDDEN, "Ruxsat yo‘q");
+        return buildResponse(HttpStatus.FORBIDDEN, "ACCESS_DENIED");
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<?> handleEmailAlreadyExists(EmailAlreadyExistsException exception) {
-        return buildResponse(HttpStatus.CONFLICT, exception.getMessage());
+        return buildResponse(HttpStatus.CONFLICT, "EMAIL_ALREADY_EXISTS");
     }
 
     @ExceptionHandler(InvalidRoleException.class)
     public ResponseEntity<?> handleInvalidRole(InvalidRoleException exception) {
-        return buildResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
+        return buildResponse(HttpStatus.BAD_REQUEST, "INVALID_ROLE");
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<?> handleUserNotFound(UserNotFoundException exception) {
-        return buildResponse(exception.getHttpStatus(), exception.getMessage());
+        return buildResponse(exception.getHttpStatus(), "USER_NOT_FOUND");
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> handleDataIntegrityViolation(DataIntegrityViolationException exception) {
-        return buildResponse(HttpStatus.CONFLICT, "Bunday ma'lumot allaqachon mavjud");
+        return buildResponse(HttpStatus.CONFLICT, "DUPLICATE_DATA");
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGenericException(Exception e) {
-        log.error("Kutilmagan xatolik", e);
-        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Noma’lum server xatosi: ", e.getMessage());
+        log.error("Unexpected error", e);
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_ERROR");
     }
 
 
-    private ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, String message) {
-        return new ResponseEntity<>(errorBody(status, message), status);
+    private ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, String code) {
+        return new ResponseEntity<>(errorBody(status, code), status);
     }
 
-    private ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, String message, String details) {
-        Map<String, Object> body = errorBody(status, message);
-        body.put("details", details); // foydali texnik izoh
-        return new ResponseEntity<>(body, status);
-    }
-
-    private Map<String, Object> errorBody(HttpStatus status, String message) {
+    private Map<String, Object> errorBody(HttpStatus status, String code) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")));
         body.put("status", status.value());
         body.put("error", status.getReasonPhrase());
-        body.put("message", message);
+        body.put("code", code);
         return body;
     }
 

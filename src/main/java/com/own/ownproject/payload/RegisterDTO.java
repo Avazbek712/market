@@ -13,19 +13,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RegisterDTO {
 
-    @NotBlank(message = "Email must not be empty")
-    @Email(message = "Email is not valid")
+    @NotBlank(message = "EMAIL_REQUIRED")
+    @Email(message = "EMAIL_INVALID")
     private String email;
 
-    @NotBlank(message = "Password must not be empty")
+    @NotBlank(message = "PASSWORD_REQUIRED")
     // 72 максимум для Bcrypt
-    @Size(min = 8, max = 72, message = "Password must be between 8 and 72 characters")
+    @Size(min = 8, max = 72, message = "PASSWORD_LENGTH")
     private String password;
 
-    @NotBlank(message = "Full name must not be empty")
+    @NotBlank(message = "FULL_NAME_REQUIRED")
     private String fullName;
 
-    @NotBlank(message = "Role must not be empty")
-    @Pattern(regexp = "BUYER|SELLER", message = "Role must be either BUYER or SELLER")
+    @NotBlank(message = "ROLE_REQUIRED")
+    @Pattern(regexp = "BUYER|SELLER", message = "ROLE_INVALID")
     private String role;
 }
