@@ -82,6 +82,10 @@ public class CategoryServiceImpl implements CategoryService {
             throw new IllegalStateException("A category cannot be its own parent");
         }
 
+        if (category.getId() != null && categoryRepository.existsByParentId(category.getId())) {
+            throw new IllegalStateException("A category with subcategories cannot be nested under another category");
+        }
+
         Category parent = categoryRepository.findById(dto.getParentId())
                 .orElseThrow(() -> new CategoryNotFoundException("Parent category not found", HttpStatus.BAD_REQUEST));
 
