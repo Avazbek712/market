@@ -76,3 +76,14 @@ ALTER TABLE categories
 
 --rollback ALTER TABLE categories DROP CONSTRAINT fk_categories_parent;
 --rollback ALTER TABLE categories DROP COLUMN parent_id;
+
+--changeset avazbek:009-categories-name-partial-unique
+--comment: Categories are soft-deleted too — name must be reusable after "deletion", same pattern as users.email
+
+ALTER TABLE categories
+    DROP CONSTRAINT uq_categories_name;
+
+CREATE UNIQUE INDEX ux_categories_name_active ON categories (name) WHERE active = true;
+
+--rollback DROP INDEX ux_categories_name_active;
+--rollback ALTER TABLE categories ADD CONSTRAINT uq_categories_name UNIQUE (name);
