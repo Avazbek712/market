@@ -4,11 +4,13 @@ export interface Category {
   id: number
   name: string
   description: string | null
+  parentId: number | null
 }
 
 export interface CategoryPayload {
   categoryName: string
   categoryDescription?: string
+  parentId?: number
 }
 
 export async function listCategories(): Promise<Category[]> {
