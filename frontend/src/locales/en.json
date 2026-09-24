@@ -78,6 +78,7 @@
         "addButton": "Add category",
         "nameLabel": "Name",
         "descriptionLabel": "Description (optional)",
+        "parentLabel": "Parent category (optional)",
         "save": "Save",
         "saving": "Saving…",
         "cancel": "Cancel",

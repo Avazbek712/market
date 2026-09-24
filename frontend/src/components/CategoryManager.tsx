@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { Fragment, useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as categoriesApi from '../api/categories'
 import type { Category } from '../api/categories'
@@ -11,9 +11,45 @@ import SubmitButton from './SubmitButton'
 interface FormState {
   name: string
   description: string
+  parentId: string
 }
 
-const EMPTY_FORM: FormState = { name: '', description: '' }
+const EMPTY_FORM: FormState = { name: '', description: '', parentId: '' }
+
+function ParentSelect({
+  id,
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  id: string
+  label: string
+  value: string
+  onChange: (value: string) => void
+  options: Category[]
+}) {
+  return (
+    <div className="mb-4">
+      <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-slate-600">
+        {label}
+      </label>
+      <select
+        id={id}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none transition-all duration-200 focus:border-accent-500 focus:ring-4 focus:ring-accent-500/15"
+      >
+        <option value="">—</option>
+        {options.map((option) => (
+          <option key={option.id} value={option.id}>
+            {option.name}
+          </option>
+        ))}
+      </select>
+    </div>
+  )
+}
 
 export default function CategoryManager() {
   const { t } = useTranslation()
@@ -43,10 +79,18 @@ export default function CategoryManager() {
     }
   }
 
+  const topLevelCategories = categories?.filter((c) => c.parentId == null) ?? []
+  const childrenOf = (parentId: number) => categories?.filter((c) => c.parentId === parentId) ?? []
+  const hasChildren = (id: number) => childrenOf(id).length > 0
+  // Only two levels are supported (enforced server-side too) — a subcategory
+  // can never itself be offered as a parent.
+  const possibleParents = topLevelCategories
+
   function toPayload(form: FormState): categoriesApi.CategoryPayload {
     return {
       categoryName: form.name,
       categoryDescription: form.description || undefined,
+      parentId: form.parentId ? Number(form.parentId) : undefined,
     }
   }
 
@@ -68,7 +112,11 @@ export default function CategoryManager() {
 
   function startEdit(category: Category) {
     setEditingId(category.id)
-    setEditForm({ name: category.name, description: category.description ?? '' })
+    setEditForm({
+      name: category.name,
+      description: category.description ?? '',
+      parentId: category.parentId != null ? String(category.parentId) : '',
+    })
     setConfirmingDeleteId(null)
   }
 
@@ -99,6 +147,108 @@ export default function CategoryManager() {
     } finally {
       setDeleteSubmittingId(null)
     }
+  }
+
+  function renderRow(category: Category, index: number, isChild: boolean) {
+    return (
+      <li
+        key={category.id}
+        className={`animate-fade-in-up rounded-xl border border-slate-200 px-4 py-3 ${isChild ? 'ml-7 border-l-2 border-l-accent-200' : ''}`}
+        style={{ animationDelay: `${Math.min(index * 40, 320)}ms` }}
+      >
+        {editingId === category.id ? (
+          <form onSubmit={(e) => handleEdit(e, category.id)}>
+            <FormField
+              id={`edit-name-${category.id}`}
+              label={t('dashboard.admin.categories.nameLabel')}
+              value={editForm.name}
+              onChange={(e) => setEditForm((prev) => ({ ...prev, name: e.target.value }))}
+              required
+            />
+            <FormField
+              id={`edit-description-${category.id}`}
+              label={t('dashboard.admin.categories.descriptionLabel')}
+              value={editForm.description}
+              onChange={(e) => setEditForm((prev) => ({ ...prev, description: e.target.value }))}
+            />
+            {!hasChildren(category.id) && (
+              <ParentSelect
+                id={`edit-parent-${category.id}`}
+                label={t('dashboard.admin.categories.parentLabel')}
+                value={editForm.parentId}
+                onChange={(value) => setEditForm((prev) => ({ ...prev, parentId: value }))}
+                options={possibleParents.filter((c) => c.id !== category.id)}
+              />
+            )}
+            <div className="flex gap-2">
+              <SubmitButton submitting={editSubmitting}>
+                {editSubmitting ? t('dashboard.admin.categories.saving') : t('dashboard.admin.categories.save')}
+              </SubmitButton>
+              <button
+                type="button"
+                onClick={() => setEditingId(null)}
+                className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
+              >
+                {t('dashboard.admin.categories.cancel')}
+              </button>
+            </div>
+          </form>
+        ) : confirmingDeleteId === category.id ? (
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm text-slate-700">
+              {t('dashboard.admin.categories.confirmDelete', { name: category.name })}
+            </span>
+            <div className="flex shrink-0 gap-2">
+              <button
+                type="button"
+                onClick={() => handleDelete(category.id)}
+                disabled={deleteSubmittingId === category.id}
+                className="rounded-lg bg-red-500 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-600 disabled:opacity-60"
+              >
+                {t('dashboard.admin.categories.confirmDeleteYes')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirmingDeleteId(null)}
+                className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
+              >
+                {t('dashboard.admin.categories.cancel')}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <TagIcon className={`shrink-0 text-accent-500 ${isChild ? 'h-3.5 w-3.5' : 'h-4 w-4'}`} />
+              <div className="min-w-0">
+                <p className="truncate font-medium text-slate-900">{category.name}</p>
+                {category.description && (
+                  <p className="truncate text-sm text-slate-500">{category.description}</p>
+                )}
+              </div>
+            </div>
+            <div className="flex shrink-0 gap-1">
+              <button
+                type="button"
+                onClick={() => startEdit(category)}
+                aria-label={t('dashboard.admin.categories.edit')}
+                className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-accent-50 hover:text-accent-600"
+              >
+                <PencilIcon className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirmingDeleteId(category.id)}
+                aria-label={t('dashboard.admin.categories.delete')}
+                className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-red-50 hover:text-red-600"
+              >
+                <TrashIcon className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
+      </li>
+    )
   }
 
   return (
@@ -144,6 +294,13 @@ export default function CategoryManager() {
             value={addForm.description}
             onChange={(e) => setAddForm((prev) => ({ ...prev, description: e.target.value }))}
           />
+          <ParentSelect
+            id="new-category-parent"
+            label={t('dashboard.admin.categories.parentLabel')}
+            value={addForm.parentId}
+            onChange={(value) => setAddForm((prev) => ({ ...prev, parentId: value }))}
+            options={possibleParents}
+          />
           <SubmitButton submitting={addSubmitting}>
             {addSubmitting ? t('dashboard.admin.categories.saving') : t('dashboard.admin.categories.save')}
           </SubmitButton>
@@ -159,95 +316,11 @@ export default function CategoryManager() {
       )}
 
       <ul className="space-y-2">
-        {categories?.map((category, index) => (
-          <li
-            key={category.id}
-            className="animate-fade-in-up rounded-xl border border-slate-200 px-4 py-3"
-            style={{ animationDelay: `${Math.min(index * 40, 320)}ms` }}
-          >
-            {editingId === category.id ? (
-              <form onSubmit={(e) => handleEdit(e, category.id)}>
-                <FormField
-                  id={`edit-name-${category.id}`}
-                  label={t('dashboard.admin.categories.nameLabel')}
-                  value={editForm.name}
-                  onChange={(e) => setEditForm((prev) => ({ ...prev, name: e.target.value }))}
-                  required
-                />
-                <FormField
-                  id={`edit-description-${category.id}`}
-                  label={t('dashboard.admin.categories.descriptionLabel')}
-                  value={editForm.description}
-                  onChange={(e) => setEditForm((prev) => ({ ...prev, description: e.target.value }))}
-                />
-                <div className="flex gap-2">
-                  <SubmitButton submitting={editSubmitting}>
-                    {editSubmitting ? t('dashboard.admin.categories.saving') : t('dashboard.admin.categories.save')}
-                  </SubmitButton>
-                  <button
-                    type="button"
-                    onClick={() => setEditingId(null)}
-                    className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
-                  >
-                    {t('dashboard.admin.categories.cancel')}
-                  </button>
-                </div>
-              </form>
-            ) : confirmingDeleteId === category.id ? (
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-sm text-slate-700">
-                  {t('dashboard.admin.categories.confirmDelete', { name: category.name })}
-                </span>
-                <div className="flex shrink-0 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(category.id)}
-                    disabled={deleteSubmittingId === category.id}
-                    className="rounded-lg bg-red-500 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-600 disabled:opacity-60"
-                  >
-                    {t('dashboard.admin.categories.confirmDeleteYes')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setConfirmingDeleteId(null)}
-                    className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
-                  >
-                    {t('dashboard.admin.categories.cancel')}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex min-w-0 items-center gap-3">
-                  <TagIcon className="h-4 w-4 shrink-0 text-accent-500" />
-                  <div className="min-w-0">
-                    <p className="truncate font-medium text-slate-900">{category.name}</p>
-                    {category.description && (
-                      <p className="truncate text-sm text-slate-500">{category.description}</p>
-                    )}
-                  </div>
-                </div>
-                <div className="flex shrink-0 gap-1">
-                  <button
-                    type="button"
-                    onClick={() => startEdit(category)}
-                    aria-label={t('dashboard.admin.categories.edit')}
-                    className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-accent-50 hover:text-accent-600"
-                  >
-                    <PencilIcon className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setConfirmingDeleteId(category.id)}
-                    aria-label={t('dashboard.admin.categories.delete')}
-                    className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-red-50 hover:text-red-600"
-                  >
-                    <TrashIcon className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            )}
-          </li>
+        {topLevelCategories.map((category, index) => (
+          <Fragment key={category.id}>
+            {renderRow(category, index, false)}
+            {childrenOf(category.id).map((child, childIndex) => renderRow(child, index + childIndex + 1, true))}
+          </Fragment>
         ))}
       </ul>
     </div>
