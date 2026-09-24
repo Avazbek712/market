@@ -15,4 +15,5 @@ public class CreateCategoryDTO {
 
     private String categoryDescription;
 
+    private Long parentId;
 }

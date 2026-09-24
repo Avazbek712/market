@@ -63,3 +63,16 @@ WHERE r.name = 'ADMIN'
 
 --rollback DELETE FROM role_permissions WHERE permission_id IN (SELECT id FROM permission WHERE code IN ('PRODUCT_CREATE', 'PRODUCT_MANAGE', 'CATEGORY_MANAGE'));
 --rollback DELETE FROM permission WHERE code IN ('PRODUCT_CREATE', 'PRODUCT_MANAGE', 'CATEGORY_MANAGE');
+
+--changeset avazbek:008-add-category-parent
+--comment: Categories can nest one level deep (parent/subcategory)
+
+ALTER TABLE categories
+    ADD COLUMN parent_id BIGINT;
+
+ALTER TABLE categories
+    ADD CONSTRAINT fk_categories_parent FOREIGN KEY (parent_id)
+        REFERENCES categories (id);
+
+--rollback ALTER TABLE categories DROP CONSTRAINT fk_categories_parent;
+--rollback ALTER TABLE categories DROP COLUMN parent_id;

@@ -72,6 +72,24 @@ public class CategoryServiceImpl implements CategoryService {
         } else {
             category.setDescription(null);
         }
+
+        if (dto.getParentId() == null) {
+            category.setParent(null);
+            return;
+        }
+
+        if (dto.getParentId().equals(category.getId())) {
+            throw new IllegalStateException("A category cannot be its own parent");
+        }
+
+        Category parent = categoryRepository.findById(dto.getParentId())
+                .orElseThrow(() -> new CategoryNotFoundException("Parent category not found", HttpStatus.BAD_REQUEST));
+
+        if (parent.getParent() != null) {
+            throw new IllegalStateException("Only two levels of categories are supported — cannot nest under a subcategory");
+        }
+
+        category.setParent(parent);
     }
 
     private Category findByIdOrThrow(Long id) {
