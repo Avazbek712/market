@@ -1,6 +1,6 @@
 package com.own.ownproject.impl;
 
-import com.own.ownproject.config.auth.CustomUserDetails;
+import com.own.ownproject.config.auth.jwt.CustomUserDetails;
 import com.own.ownproject.config.auth.jwt.JwtService;
 import com.own.ownproject.exception.UserNotFoundException;
 import com.own.ownproject.mapper.UserMapper;

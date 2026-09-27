@@ -1,4 +1,4 @@
-package com.own.ownproject.config.auth;
+package com.own.ownproject.config.auth.jwt;
 
 import com.own.ownproject.entity.User;
 import com.own.ownproject.repository.UserRepository;

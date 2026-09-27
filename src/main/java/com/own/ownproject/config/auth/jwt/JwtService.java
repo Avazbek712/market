@@ -1,6 +1,5 @@
 package com.own.ownproject.config.auth.jwt;
 
-import com.own.ownproject.config.auth.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
