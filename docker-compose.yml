@@ -3,9 +3,9 @@ services:
     image: postgres:16
     container_name: minimarket-postgres
     environment:
-      POSTGRES_DB: minimarket
-      POSTGRES_USER: minimarket
-      POSTGRES_PASSWORD: minimarket
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5433:5432"
     volumes:
@@ -43,8 +43,8 @@ services:
       - "9000:9000"   # S3 API — сюда будет стучаться Spring Boot
       - "9001:9001"   # веб-консоль — смотреть бакеты глазами
     environment:
-      MINIO_ROOT_USER: minimarket
-      MINIO_ROOT_PASSWORD: minimarket123
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     command: server /data --console-address ":9001"
     volumes:
       - minio-data:/data

@@ -1,9 +1,6 @@
 package com.own.ownproject.handler;
 
-import com.own.ownproject.exception.CategoryNotFoundException;
-import com.own.ownproject.exception.EmailAlreadyExistsException;
-import com.own.ownproject.exception.InvalidRoleException;
-import com.own.ownproject.exception.UserNotFoundException;
+import com.own.ownproject.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -34,11 +31,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CategoryNotFoundException.class)
     public ResponseEntity<?> handleCategoryNotFound(CategoryNotFoundException exception) {
+        log.warn("Category not found: {}", exception.getMessage());
         return buildResponse(exception.getHttpStatus(), "CATEGORY_NOT_FOUND");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationException(MethodArgumentNotValidException exception) {
+        log.warn("Validation failed: {}", exception.getMessage());
         List<Map<String, String>> fieldErrors = exception.getBindingResult().getFieldErrors().stream()
                 .map(fe -> Map.of("field", fe.getField(), "code", String.valueOf(fe.getDefaultMessage())))
                 .collect(Collectors.toList());
@@ -50,31 +49,44 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<?> handleAuthenticationException(AuthenticationException exception) {
+        log.warn("Authentication failed: {}", exception.getMessage());
         return buildResponse(HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS");
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException exception) {
+        log.warn("Access denied: {}", exception.getMessage());
         return buildResponse(HttpStatus.FORBIDDEN, "ACCESS_DENIED");
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<?> handleEmailAlreadyExists(EmailAlreadyExistsException exception) {
+        log.warn("Email already exists: {}", exception.getMessage());
         return buildResponse(HttpStatus.CONFLICT, "EMAIL_ALREADY_EXISTS");
     }
 
     @ExceptionHandler(InvalidRoleException.class)
     public ResponseEntity<?> handleInvalidRole(InvalidRoleException exception) {
+        log.warn("Invalid role: {}", exception.getMessage());
         return buildResponse(HttpStatus.BAD_REQUEST, "INVALID_ROLE");
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<?> handleUserNotFound(UserNotFoundException exception) {
+        log.warn("User not found: {}", exception.getMessage());
         return buildResponse(exception.getHttpStatus(), "USER_NOT_FOUND");
     }
 
+    @ExceptionHandler(FileStorageException.class)
+    public ResponseEntity<?> handleFileStorageException(FileStorageException exception) {
+        log.warn("File storage error: {}", exception.getMessage(), exception);
+        return buildResponse(exception.getHttpStatus(), "FILE_STORAGE_ERROR");
+    }
+
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> handleDataIntegrityViolation(DataIntegrityViolationException exception) {
+        log.warn("Data integrity violation: {}", exception.getMessage());
         return buildResponse(HttpStatus.CONFLICT, "DUPLICATE_DATA");
     }
 

@@ -35,3 +35,7 @@ build/
 ### Environment secrets ###
 .env
 
+### OS / logs ###
+.DS_Store
+*.log
+
