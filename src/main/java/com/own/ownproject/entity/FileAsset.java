@@ -31,6 +31,7 @@ public class FileAsset extends AbsEntity {
     private String contentType;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "uploaded_by")
     private User uploadedBy;
 
     private Long sizeBytes;

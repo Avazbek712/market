@@ -77,6 +77,12 @@ public class GlobalExceptionHandler {
         return buildResponse(exception.getHttpStatus(), "USER_NOT_FOUND");
     }
 
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<?> handleProductNotFound(ProductNotFoundException exception) {
+        log.warn("Product not found: {}", exception.getMessage());
+        return buildResponse(exception.getHttpStatus(), "PRODUCT_NOT_FOUND");
+    }
+
     @ExceptionHandler(FileStorageException.class)
     public ResponseEntity<?> handleFileStorageException(FileStorageException exception) {
         log.warn("File storage error: {}", exception.getMessage(), exception);

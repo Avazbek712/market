@@ -53,6 +53,13 @@
     "ROLE_INVALID": "Роль должна быть покупатель или продавец.",
     "CATEGORY_NOT_FOUND": "Категория не найдена.",
     "CATEGORY_NAME_REQUIRED": "Введите название категории.",
+    "PRODUCT_NOT_FOUND": "Товар не найден.",
+    "PRODUCT_NAME_REQUIRED": "Введите название товара.",
+    "PRODUCT_PRICE_REQUIRED": "Введите цену.",
+    "PRODUCT_PRICE_INVALID": "Цена должна быть больше нуля.",
+    "PRODUCT_QUANTITY_REQUIRED": "Введите количество.",
+    "PRODUCT_QUANTITY_INVALID": "Количество не может быть отрицательным.",
+    "FILE_STORAGE_ERROR": "Не удалось загрузить файл.",
     "GENERIC": "Что-то пошло не так, попробуйте ещё раз."
   },
   "dashboard": {
@@ -62,7 +69,27 @@
     },
     "seller": {
       "title": "Дашборд продавца",
-      "subtitle": "Здесь появятся ваши товары и продажи."
+      "subtitle": "Здесь появятся ваши товары и продажи.",
+      "products": {
+        "title": "Мои товары",
+        "addButton": "Добавить товар",
+        "nameLabel": "Название",
+        "descriptionLabel": "Описание (необязательно)",
+        "priceLabel": "Цена",
+        "quantityLabel": "Количество",
+        "categoryLabel": "Категория (необязательно)",
+        "imagesLabel": "Фото (необязательно)",
+        "save": "Сохранить",
+        "saving": "Сохраняем…",
+        "cancel": "Отмена",
+        "edit": "Изменить",
+        "delete": "Удалить",
+        "confirmDelete": "Удалить «{{name}}»?",
+        "confirmDeleteYes": "Да, удалить",
+        "empty": "Пока нет товаров — добавьте первый.",
+        "loading": "Загружаем товары…",
+        "priceAndQty": "{{price}}$ · в наличии: {{count}}"
+      }
     },
     "admin": {
       "title": "Дашборд администратора",

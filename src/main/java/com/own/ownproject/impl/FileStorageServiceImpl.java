@@ -64,6 +64,24 @@ public class FileStorageServiceImpl implements FileStorageService {
     }
 
     @Override
+    public FileAsset getById(Long id) {
+        return fileAssetRepository.findById(id)
+                .orElseThrow(() -> new FileStorageException("File not found: " + id, HttpStatus.NOT_FOUND));
+    }
+
+    @Override
+    public InputStream download(String storageKey) {
+        try {
+            return minioClient.getObject(GetObjectArgs.builder()
+                    .bucket(bucket)
+                    .object(storageKey)
+                    .build());
+        } catch (Exception e) {
+            throw new FileStorageException("Failed to download file: " + storageKey, HttpStatus.NOT_FOUND, e);
+        }
+    }
+
+    @Override
     public void delete(String storageKey) {
         FileAsset asset = fileAssetRepository.findByStorageKey(storageKey).orElseThrow(() ->
                 new FileStorageException("File not found: " + storageKey, HttpStatus.NOT_FOUND));

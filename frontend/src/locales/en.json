@@ -53,6 +53,13 @@
     "ROLE_INVALID": "Role must be either buyer or seller.",
     "CATEGORY_NOT_FOUND": "Category not found.",
     "CATEGORY_NAME_REQUIRED": "Category name is required.",
+    "PRODUCT_NOT_FOUND": "Product not found.",
+    "PRODUCT_NAME_REQUIRED": "Product name is required.",
+    "PRODUCT_PRICE_REQUIRED": "Price is required.",
+    "PRODUCT_PRICE_INVALID": "Price must be greater than zero.",
+    "PRODUCT_QUANTITY_REQUIRED": "Quantity is required.",
+    "PRODUCT_QUANTITY_INVALID": "Quantity can't be negative.",
+    "FILE_STORAGE_ERROR": "Something went wrong with the file upload.",
     "GENERIC": "Something went wrong, please try again."
   },
   "dashboard": {
@@ -62,7 +69,27 @@
     },
     "seller": {
       "title": "Seller dashboard",
-      "subtitle": "Your listings and sales will show up here."
+      "subtitle": "Your listings and sales will show up here.",
+      "products": {
+        "title": "My products",
+        "addButton": "Add product",
+        "nameLabel": "Name",
+        "descriptionLabel": "Description (optional)",
+        "priceLabel": "Price",
+        "quantityLabel": "Quantity",
+        "categoryLabel": "Category (optional)",
+        "imagesLabel": "Photos (optional)",
+        "save": "Save",
+        "saving": "Saving…",
+        "cancel": "Cancel",
+        "edit": "Edit",
+        "delete": "Delete",
+        "confirmDelete": "Delete \"{{name}}\"?",
+        "confirmDeleteYes": "Yes, delete",
+        "empty": "No products yet — add the first one.",
+        "loading": "Loading products…",
+        "priceAndQty": "${{price}} · {{count}} in stock"
+      }
     },
     "admin": {
       "title": "Admin dashboard",
