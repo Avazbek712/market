@@ -86,5 +86,5 @@ jobs:
           script: |
             cd ~/market
             git pull
-            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml pull backend
             docker compose -f docker-compose.prod.yml up -d --force-recreate backend
