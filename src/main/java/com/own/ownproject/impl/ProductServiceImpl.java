@@ -101,6 +101,12 @@ public class ProductServiceImpl implements ProductService {
         productRepository.delete(product);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public ProductDTO getProductById(Long id, Authentication authentication) {
+        return productMapper.toProductDTO(findByIdOrThrow(id));
+    }
+
     private void applyToEntity(Product product, CreateProductDTO dto) {
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());

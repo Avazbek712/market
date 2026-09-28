@@ -20,4 +20,6 @@ public interface ProductService {
     ProductDTO updateProduct(Long id, CreateProductDTO createProductDTO, Authentication authentication);
 
     void deleteProduct(Long id, Authentication authentication);
+
+    ProductDTO getProductById(Long id, Authentication authentication);
 }
