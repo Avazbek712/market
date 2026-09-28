@@ -26,6 +26,8 @@ public class ProductDTO {
 
     private Long sellerId;
 
+    private String sellerName;
+
     private List<Long> imageIds;
 
 }

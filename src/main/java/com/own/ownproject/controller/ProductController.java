@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 
@@ -25,8 +26,13 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public ResponseEntity<Page<ProductDTO>> getProducts(Pageable pageable) {
-        return ResponseEntity.ok(productService.getProducts(pageable));
+    public ResponseEntity<Page<ProductDTO>> getProducts(
+            Pageable pageable,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice) {
+        return ResponseEntity.ok(productService.getProducts(pageable, categoryId, search, minPrice, maxPrice));
     }
 
     @GetMapping("/mine")

@@ -8,6 +8,7 @@ export interface Product {
   quantity: number
   categoryId: number | null
   sellerId: number
+  sellerName: string | null
   imageIds: number[]
 }
 
@@ -27,8 +28,33 @@ export interface PageResponse<T> {
   size: number
 }
 
-export async function listProducts(page = 0, size = 20): Promise<PageResponse<Product>> {
-  const { data } = await apiClient.get<PageResponse<Product>>('/products', { params: { page, size } })
+export interface ProductFilters {
+  page?: number
+  size?: number
+  sort?: string
+  categoryId?: number
+  search?: string
+  minPrice?: number
+  maxPrice?: number
+}
+
+export async function listProducts(filters: ProductFilters = {}): Promise<PageResponse<Product>> {
+  const { data } = await apiClient.get<PageResponse<Product>>('/products', {
+    params: {
+      page: filters.page ?? 0,
+      size: filters.size ?? 20,
+      sort: filters.sort,
+      categoryId: filters.categoryId,
+      search: filters.search || undefined,
+      minPrice: filters.minPrice,
+      maxPrice: filters.maxPrice,
+    },
+  })
+  return data
+}
+
+export async function getProduct(id: number): Promise<Product> {
+  const { data } = await apiClient.get<Product>(`/products/${id}`)
   return data
 }
 

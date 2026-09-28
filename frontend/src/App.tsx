@@ -4,6 +4,7 @@ import ProtectedRoute from './auth/ProtectedRoute'
 import AdminDashboard from './pages/AdminDashboard'
 import BuyerDashboard from './pages/BuyerDashboard'
 import LoginPage from './pages/LoginPage'
+import ProductDetailPage from './pages/ProductDetailPage'
 import RegisterPage from './pages/RegisterPage'
 import SellerDashboard from './pages/SellerDashboard'
 
@@ -13,6 +14,7 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/" element={<HomeRedirect />} />
+      <Route path="/products/:id" element={<ProductDetailPage />} />
       <Route
         path="/buyer"
         element={
