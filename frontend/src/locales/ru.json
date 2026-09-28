@@ -62,6 +62,40 @@
     "FILE_STORAGE_ERROR": "Не удалось загрузить файл.",
     "GENERIC": "Что-то пошло не так, попробуйте ещё раз."
   },
+  "catalog": {
+    "title": "Каталог товаров",
+    "subtitle": "Все товары, доступные сейчас на MiniMarket.",
+    "priceValue": "{{price}}$",
+    "empty": "По вашим фильтрам ничего не найдено.",
+    "header": {
+      "login": "Войти",
+      "register": "Регистрация",
+      "dashboard": "Личный кабинет"
+    },
+    "filters": {
+      "searchLabel": "Поиск",
+      "searchPlaceholder": "Поиск товаров…",
+      "categoryLabel": "Категория",
+      "categoryAll": "Все категории",
+      "minPriceLabel": "Цена от",
+      "maxPriceLabel": "Цена до",
+      "sortLabel": "Сортировка",
+      "sortNewest": "Сначала новые",
+      "sortPriceAsc": "Сначала дешёвые",
+      "sortPriceDesc": "Сначала дорогие"
+    },
+    "pagination": {
+      "prev": "Предыдущая страница",
+      "next": "Следующая страница",
+      "pageInfo": "Страница {{current}} из {{total}}"
+    }
+  },
+  "productDetail": {
+    "back": "Назад в каталог",
+    "seller": "Продавец",
+    "inStock": "В наличии: {{count}}",
+    "outOfStock": "Нет в наличии"
+  },
   "dashboard": {
     "buyer": {
       "title": "Дашборд покупателя",

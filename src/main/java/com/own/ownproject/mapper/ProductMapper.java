@@ -13,6 +13,7 @@ import java.util.List;
 public interface ProductMapper {
     @Mapping(source = "category.id", target = "categoryId")
     @Mapping(source = "seller.id", target = "sellerId")
+    @Mapping(source = "seller.fullName", target = "sellerName")
     @Mapping(target = "imageIds", expression = "java(mapImageIds(product.getImages()))")
     ProductDTO toProductDTO(Product product);
 

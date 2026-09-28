@@ -7,11 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProductService {
 
-    Page<ProductDTO> getProducts(Pageable pageable);
+    Page<ProductDTO> getProducts(Pageable pageable, Long categoryId, String search, BigDecimal minPrice, BigDecimal maxPrice);
 
     Page<ProductDTO> getMyProducts(Pageable pageable, Authentication authentication);
 

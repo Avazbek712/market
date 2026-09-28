@@ -62,6 +62,40 @@
     "FILE_STORAGE_ERROR": "Something went wrong with the file upload.",
     "GENERIC": "Something went wrong, please try again."
   },
+  "catalog": {
+    "title": "Browse products",
+    "subtitle": "Everything currently listed on MiniMarket.",
+    "priceValue": "${{price}}",
+    "empty": "No products match your filters.",
+    "header": {
+      "login": "Log in",
+      "register": "Register",
+      "dashboard": "Dashboard"
+    },
+    "filters": {
+      "searchLabel": "Search",
+      "searchPlaceholder": "Search products…",
+      "categoryLabel": "Category",
+      "categoryAll": "All categories",
+      "minPriceLabel": "Min price",
+      "maxPriceLabel": "Max price",
+      "sortLabel": "Sort by",
+      "sortNewest": "Newest",
+      "sortPriceAsc": "Price: low to high",
+      "sortPriceDesc": "Price: high to low"
+    },
+    "pagination": {
+      "prev": "Previous page",
+      "next": "Next page",
+      "pageInfo": "Page {{current}} of {{total}}"
+    }
+  },
+  "productDetail": {
+    "back": "Back to catalog",
+    "seller": "Seller",
+    "inStock": "{{count}} in stock",
+    "outOfStock": "Out of stock"
+  },
   "dashboard": {
     "buyer": {
       "title": "Buyer dashboard",
