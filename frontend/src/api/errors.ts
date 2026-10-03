@@ -22,6 +22,11 @@ export function extractErrorMessage(error: unknown): string {
     if (body?.code) {
       return i18n.t(`errors.${body.code}`, { defaultValue: i18n.t('errors.GENERIC') })
     }
+    // A 413 from nginx (body over client_max_body_size) never reaches the backend,
+    // so it comes back as an HTML page without our JSON "code".
+    if (error.response?.status === 413) {
+      return i18n.t('errors.FILE_TOO_LARGE')
+    }
   }
   return i18n.t('errors.GENERIC')
 }

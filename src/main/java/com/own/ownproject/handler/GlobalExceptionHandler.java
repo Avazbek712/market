@@ -10,6 +10,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -89,6 +90,12 @@ public class GlobalExceptionHandler {
         return buildResponse(exception.getHttpStatus(), "FILE_STORAGE_ERROR");
     }
 
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<?> handleMaxUploadSizeExceeded(MaxUploadSizeExceededException exception) {
+        log.warn("Upload too large: {}", exception.getMessage());
+        return buildResponse(HttpStatus.CONTENT_TOO_LARGE, "FILE_TOO_LARGE");
+    }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> handleDataIntegrityViolation(DataIntegrityViolationException exception) {
