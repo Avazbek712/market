@@ -60,6 +60,7 @@
     "PRODUCT_QUANTITY_REQUIRED": "Quantity is required.",
     "PRODUCT_QUANTITY_INVALID": "Quantity can't be negative.",
     "FILE_STORAGE_ERROR": "Something went wrong with the file upload.",
+    "FILE_TOO_LARGE": "Images are too large: up to 10 MB each and 50 MB in total.",
     "GENERIC": "Something went wrong, please try again."
   },
   "catalog": {

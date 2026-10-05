@@ -20,6 +20,16 @@ interface FormState {
 
 const EMPTY_FORM: FormState = { name: '', description: '', price: '', quantity: '', categoryId: '' }
 
+// Mirrors spring.servlet.multipart.* limits on the backend — checked here only to fail
+// fast without uploading; the backend and nginx still enforce them.
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024
+const MAX_TOTAL_BYTES = 50 * 1024 * 1024
+
+function imagesExceedLimits(images: File[]) {
+  const total = images.reduce((sum, file) => sum + file.size, 0)
+  return total > MAX_TOTAL_BYTES || images.some((file) => file.size > MAX_IMAGE_BYTES)
+}
+
 function CategorySelect({
   id,
   label,
@@ -112,6 +122,10 @@ export default function ProductManager() {
   async function handleAdd(event: FormEvent) {
     event.preventDefault()
     setError(null)
+    if (imagesExceedLimits(addImages)) {
+      setError(t('errors.FILE_TOO_LARGE'))
+      return
+    }
     setAddSubmitting(true)
     try {
       const created = await productsApi.createProduct(toPayload(addForm), addImages)
