@@ -23,4 +23,10 @@ public interface ProductService {
     void deleteProduct(Long id, Authentication authentication);
 
     ProductDTO getProductById(Long id, Authentication authentication);
+
+    ProductDTO addImages(Long productId, List<MultipartFile> images, Authentication authentication);
+
+    ProductDTO removeImages(Long productId, Long fileAssetId, Authentication authentication);
+
+    ProductDTO reorderImages(Long productId, List<Long> fileAssetIdsInOrder, Authentication authentication);
 }

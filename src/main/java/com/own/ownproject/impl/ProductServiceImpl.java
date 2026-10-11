@@ -2,6 +2,7 @@ package com.own.ownproject.impl;
 
 import com.own.ownproject.entity.*;
 import com.own.ownproject.exception.CategoryNotFoundException;
+import com.own.ownproject.exception.ProductImageNotFoundException;
 import com.own.ownproject.exception.ProductNotFoundException;
 import com.own.ownproject.exception.UserNotFoundException;
 import com.own.ownproject.mapper.ProductMapper;
@@ -25,7 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -127,6 +131,89 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public ProductDTO getProductById(Long id, Authentication authentication) {
         return productMapper.toProductDTO(findByIdOrThrow(id));
+    }
+
+    @Override
+    @Transactional
+    public ProductDTO addImages(Long productId, List<MultipartFile> images, Authentication authentication) {
+
+        Product product = findByIdOrThrow(productId);
+
+        assertOwnerOrAdmin(product, authentication);
+
+        User user = userRepository
+                .findUserByEmail(authentication.getName()).orElseThrow(() -> new UserNotFoundException("User not found", HttpStatus.NOT_FOUND));
+
+        if (images.size() + product.getImages().size() > 10) {
+            throw new IllegalStateException("MAX_IMAGES_EXCEEDED");
+        }
+
+        int nextSortOrder = product.getImages().stream()
+                .mapToInt(ProductImage::getSortOrder)
+                .max()
+                .orElse(-1) + 1;
+
+        for (int i = 0; i < images.size(); i++) {
+            MultipartFile file = images.get(i);
+            if (file.isEmpty()) continue;
+            FileAsset fileAsset = fileStorageService.upload(file, user, FileCategory.PRODUCT_IMAGE);
+
+            ProductImage productImage = new ProductImage();
+            productImage.setProduct(product);
+            productImage.setFileAsset(fileAsset);
+            productImage.setSortOrder(nextSortOrder + i);
+
+            product.getImages().add(productImage);
+        }
+        productRepository.save(product);
+
+        return productMapper.toProductDTO(product);
+
+    }
+
+    @Override
+    @Transactional
+    public ProductDTO removeImages(Long productId, Long fileAssetId, Authentication authentication) {
+
+        Product product = findByIdOrThrow(productId);
+        assertOwnerOrAdmin(product, authentication);
+
+        boolean removed = product.getImages().removeIf(productImage -> productImage.getFileAsset().getId().equals(fileAssetId));
+
+        if (!removed) {
+            throw new ProductImageNotFoundException("Product image not found", HttpStatus.NOT_FOUND);
+        }
+        productRepository.save(product);
+        return productMapper.toProductDTO(product);
+    }
+
+    @Override
+    @Transactional
+    public ProductDTO reorderImages(Long productId, List<Long> fileAssetIdsInOrder, Authentication authentication) {
+
+        Product product = findByIdOrThrow(productId);
+        assertOwnerOrAdmin(product, authentication);
+
+        Set<Long> existingIds = product.getImages().stream()
+                .map(pi -> pi.getFileAsset().getId())
+                .collect(Collectors.toSet());
+
+        Set<Long> inComingSet = new HashSet<>(fileAssetIdsInOrder);
+
+        if (fileAssetIdsInOrder.size() != inComingSet.size() || !existingIds.equals(inComingSet)) {
+            throw new IllegalStateException("IMAGE_ORDER_MISMATCH");
+        }
+
+        for (int i = 0; i < fileAssetIdsInOrder.size(); i++) {
+            Long fileAssetId = fileAssetIdsInOrder.get(i);
+            ProductImage image = product.getImages()
+                    .stream()
+                    .filter(pi -> pi.getFileAsset().getId().equals(fileAssetId)).findFirst().orElseThrow();
+            image.setSortOrder(i);
+
+        }
+        productRepository.save(product);
+        return productMapper.toProductDTO(product);
     }
 
     private void applyToEntity(Product product, CreateProductDTO dto) {

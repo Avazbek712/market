@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
+import java.lang.IllegalStateException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -82,6 +83,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleProductNotFound(ProductNotFoundException exception) {
         log.warn("Product not found: {}", exception.getMessage());
         return buildResponse(exception.getHttpStatus(), "PRODUCT_NOT_FOUND");
+    }
+
+    @ExceptionHandler(ProductImageNotFoundException.class)
+    public ResponseEntity<?> handleProductImageNotFound(ProductImageNotFoundException exception) {
+        log.warn("Product image not found: {}", exception.getMessage());
+        return buildResponse(exception.getHttpStatus(), "PRODUCT_IMAGE_NOT_FOUND");
     }
 
     @ExceptionHandler(FileStorageException.class)

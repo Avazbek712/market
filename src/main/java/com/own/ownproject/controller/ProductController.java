@@ -69,4 +69,23 @@ public class ProductController {
         productService.deleteProduct(id, authentication);
         return ResponseEntity.noContent().build();
     }
+
+
+    @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('PRODUCT_MANAGE')")
+    public ResponseEntity<ProductDTO> addImages(@PathVariable Long id, @RequestParam List<MultipartFile> images, Authentication authentication) {
+        return ResponseEntity.ok(productService.addImages(id, images, authentication));
+    }
+
+    @DeleteMapping("/{id}/images/{fileAssetId}")
+    @PreAuthorize("hasAuthority('PRODUCT_MANAGE')")
+    public ResponseEntity<ProductDTO> removeImages(@PathVariable Long id, @PathVariable Long fileAssetId, Authentication authentication) {
+        return ResponseEntity.ok(productService.removeImages(id, fileAssetId, authentication));
+    }
+
+    @PatchMapping("/{id}/images/order")
+    @PreAuthorize("hasAuthority('PRODUCT_MANAGE')")
+    public ResponseEntity<ProductDTO> reorderImages(@PathVariable Long id, @RequestBody List<Long> fileAssetsId, Authentication authentication) {
+        return ResponseEntity.ok(productService.reorderImages(id, fileAssetsId, authentication));
+    }
 }
