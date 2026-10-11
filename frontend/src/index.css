@@ -1,12 +1,74 @@
 @import "tailwindcss";
 
 @theme {
-  --color-accent-50: #faf5ff;
-  --color-accent-100: #f3e8ff;
-  --color-accent-400: #c084fc;
-  --color-accent-500: #aa3bff;
-  --color-accent-600: #9333ea;
-  --color-accent-700: #7e22ce;
+  /* Brand — ember orange (primary CTA, logo accent) */
+  --color-brand-50: #fdf4f0;
+  --color-brand-100: #fbe5db;
+  --color-brand-200: #f6c7b2;
+  --color-brand-300: #f0a383;
+  --color-brand-400: #eb7f57;
+  --color-brand-500: #e4572e;
+  --color-brand-600: #c8431f;
+  --color-brand-700: #9e3418;
+  --color-brand-800: #7a2812;
+  --color-brand-900: #5c1e0d;
+
+  /* Accent — deep teal (secondary highlight, badges, links) */
+  --color-accent-50: #eaf6f3;
+  --color-accent-100: #cfeae3;
+  --color-accent-200: #9ed4c6;
+  --color-accent-300: #6cbda9;
+  --color-accent-400: #3c9f89;
+  --color-accent-500: #0f6b5c;
+  --color-accent-600: #0c5649;
+  --color-accent-700: #0a4339;
+  --color-accent-800: #07322b;
+  --color-accent-900: #05231f;
+
+  /* Stone — warm neutral scale (replaces cold slate) */
+  --color-stone-50: #faf7f2;
+  --color-stone-100: #f3eee6;
+  --color-stone-200: #e7dfd3;
+  --color-stone-300: #d6cbb9;
+  --color-stone-400: #b3a696;
+  --color-stone-500: #8f8172;
+  --color-stone-600: #6e6356;
+  --color-stone-700: #534a40;
+  --color-stone-800: #39322b;
+  --color-stone-900: #1c1a17;
+  --color-stone-950: #120f0d;
+
+  /* States */
+  --color-success: #2f9e44;
+  --color-warning: #d99e2b;
+  --color-danger: #e11d48;
+
+  /* Semantic surface/content tokens — flip between light/dark below */
+  --color-surface-base: #faf7f2;
+  --color-surface-raised: #fffdf9;
+  --color-surface-sunken: #f1eae0;
+  --color-content-primary: #1c1a17;
+  --color-content-secondary: #534a40;
+  --color-content-inverse: #faf7f2;
+  --color-border-subtle: #e7dfd3;
+  --color-border-strong: #b3a696;
+
+  /* Typography */
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Fraunces", ui-serif, Georgia, serif;
+
+  /* Radii — softer, friendlier than Tailwind defaults */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+
+  /* Shadows — warm ink tint instead of pure black */
+  --shadow-xs: 0 1px 2px rgb(28 26 23 / 0.04);
+  --shadow-sm: 0 2px 4px rgb(28 26 23 / 0.06), 0 1px 2px rgb(28 26 23 / 0.04);
+  --shadow-md: 0 8px 16px rgb(28 26 23 / 0.08), 0 2px 4px rgb(28 26 23 / 0.04);
+  --shadow-lg: 0 16px 32px rgb(28 26 23 / 0.12), 0 4px 8px rgb(28 26 23 / 0.04);
 
   --animate-fade-in-up: fade-in-up 0.4s ease-out both;
   --animate-shake: shake 0.35s ease-in-out;
@@ -63,6 +125,37 @@
   }
 }
 
+:root {
+  color-scheme: light;
+}
+
+/* Dark theme — follows OS preference by default, overridable later via .dark/.light class */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    color-scheme: dark;
+    --color-surface-base: #171411;
+    --color-surface-raised: #211d18;
+    --color-surface-sunken: #140f0c;
+    --color-content-primary: #f5efe6;
+    --color-content-secondary: #c9bba9;
+    --color-content-inverse: #1c1a17;
+    --color-border-subtle: #39322b;
+    --color-border-strong: #534a40;
+  }
+}
+
+:root.dark {
+  color-scheme: dark;
+  --color-surface-base: #171411;
+  --color-surface-raised: #211d18;
+  --color-surface-sunken: #140f0c;
+  --color-content-primary: #f5efe6;
+  --color-content-secondary: #c9bba9;
+  --color-content-inverse: #1c1a17;
+  --color-border-subtle: #39322b;
+  --color-border-strong: #534a40;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -74,5 +167,5 @@
 }
 
 body {
-  @apply bg-gradient-to-br from-slate-50 via-white to-accent-50 text-slate-800 antialiased;
+  @apply bg-surface-base text-content-primary font-sans antialiased;
 }
