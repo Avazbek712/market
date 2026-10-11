@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import * as productsApi from '../api/products'
@@ -13,7 +13,8 @@ export default function ProductCard({ product, categoryName }: { product: Produc
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4 }}
-      transition={{ duration: 0.25 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
       className="h-full"
     >
       <Link
@@ -22,10 +23,12 @@ export default function ProductCard({ product, categoryName }: { product: Produc
       >
         <div className="aspect-square w-full overflow-hidden bg-accent-50">
           {product.imageIds.length > 0 ? (
-            <img
+            <motion.img
               src={productsApi.fileUrl(product.imageIds[0])}
               alt={product.name}
               className="h-full w-full object-cover"
+              whileHover={{ scale: 1.06 }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-accent-300">

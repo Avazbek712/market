@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as categoriesApi from '../api/categories'
@@ -77,27 +77,33 @@ export default function CatalogPage() {
 
         {!loading && totalPages > 1 && (
           <div className="mt-8 flex items-center justify-center gap-3">
-            <button
+            <motion.button
               type="button"
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={page === 0}
               aria-label={t('catalog.pagination.prev')}
+              whileHover={page === 0 ? undefined : { scale: 1.08 }}
+              whileTap={page === 0 ? undefined : { scale: 0.92 }}
+              transition={{ duration: 0.15 }}
               className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 text-slate-600 transition-colors hover:bg-accent-50 hover:text-accent-600 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronLeftIcon className="h-4 w-4" />
-            </button>
+            </motion.button>
             <span className="text-sm text-slate-600">
               {t('catalog.pagination.pageInfo', { current: page + 1, total: totalPages })}
             </span>
-            <button
+            <motion.button
               type="button"
               onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
               disabled={page >= totalPages - 1}
               aria-label={t('catalog.pagination.next')}
+              whileHover={page >= totalPages - 1 ? undefined : { scale: 1.08 }}
+              whileTap={page >= totalPages - 1 ? undefined : { scale: 0.92 }}
+              transition={{ duration: 0.15 }}
               className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 text-slate-600 transition-colors hover:bg-accent-50 hover:text-accent-600 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronRightIcon className="h-4 w-4" />
-            </button>
+            </motion.button>
           </div>
         )}
       </motion.div>
