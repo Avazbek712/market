@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
 import { DASHBOARD_PATH } from '../auth/roles'
 import LanguageSwitcher from './LanguageSwitcher'
+import Logo from './Logo'
 
 const MotionLink = motion.create(Link)
 
@@ -48,9 +49,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
       </div>
 
       <header className="relative z-10 flex items-center justify-between border-b border-slate-200 bg-white/70 px-6 py-4 backdrop-blur">
-        <Link to="/" className="text-lg font-semibold text-slate-900">
-          {t('common.appName')}
-        </Link>
+        <Logo />
         <div className="flex items-center gap-4">
           <LanguageSwitcher />
           {status === 'authenticated' && me ? (

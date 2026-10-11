@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
 import LanguageSwitcher from './LanguageSwitcher'
+import Logo from './Logo'
 
 export default function DashboardLayout({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
   const { t } = useTranslation()
@@ -16,7 +17,7 @@ export default function DashboardLayout({ children, wide = false }: { children: 
       </div>
 
       <header className="relative z-10 flex items-center justify-between border-b border-slate-200 bg-white/70 px-6 py-4 backdrop-blur">
-        <span className="text-lg font-semibold text-slate-900">{t('common.appName')}</span>
+        <Logo />
         <div className="flex items-center gap-4">
           <LanguageSwitcher />
           {me && <span className="hidden text-sm text-slate-500 sm:inline">{me.fullName || me.email}</span>}
