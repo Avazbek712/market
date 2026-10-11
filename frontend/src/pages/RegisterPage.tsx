@@ -1,3 +1,4 @@
+import { motion } from 'motion/react'
 import { useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
@@ -92,10 +93,13 @@ export default function RegisterPage() {
             <span className="mb-1.5 block text-sm font-medium text-slate-600">{t('auth.register.roleLabel')}</span>
             <div className="grid grid-cols-2 gap-2">
               {roles.map(({ value, label }) => (
-                <button
+                <motion.button
                   key={value}
                   type="button"
                   onClick={() => update('role', value)}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.96 }}
+                  transition={{ duration: 0.15 }}
                   className={`rounded-xl border px-3 py-2 text-sm font-medium transition-all duration-200 ${
                     form.role === value
                       ? 'border-accent-500 bg-accent-50 text-accent-700 shadow-sm shadow-accent-500/20'
@@ -103,7 +107,7 @@ export default function RegisterPage() {
                   }`}
                 >
                   {label}
-                </button>
+                </motion.button>
               ))}
             </div>
           </div>

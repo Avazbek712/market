@@ -2,7 +2,7 @@ import { motion } from 'motion/react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
-function LogoMark({ className = 'h-9 w-9' }: { className?: string }) {
+export function LogoMark({ className = 'h-9 w-9' }: { className?: string }) {
   return (
     <svg viewBox="0 0 36 36" className={className} aria-hidden="true">
       <rect width="36" height="36" rx="10" className="fill-brand-500" />
