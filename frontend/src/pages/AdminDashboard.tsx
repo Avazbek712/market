@@ -33,8 +33,8 @@ export default function AdminDashboard() {
   return (
     <DashboardLayout wide>
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-slate-900">{t('dashboard.admin.title')}</h1>
-        <p className="text-sm text-slate-600">{t('dashboard.admin.subtitle')}</p>
+        <h1 className="text-2xl font-semibold text-content-primary">{t('dashboard.admin.title')}</h1>
+        <p className="text-sm text-content-secondary">{t('dashboard.admin.subtitle')}</p>
       </div>
 
       {visibleItems.length > 0 && (
@@ -48,7 +48,7 @@ export default function AdminDashboard() {
                 className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
                   activeSection === item.id
                     ? 'bg-accent-500 text-white shadow-sm shadow-accent-500/30'
-                    : 'text-slate-600 hover:bg-white/60'
+                    : 'text-content-secondary hover:bg-surface-raised/60'
                 }`}
               >
                 {item.icon}
@@ -60,11 +60,11 @@ export default function AdminDashboard() {
           <div className="min-w-0 flex-1">
             {activeSection === 'categories' && <CategoryManager />}
             {activeSection === 'roles' && (
-              <div className="animate-fade-in-up flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-50 text-accent-600">
+              <div className="animate-fade-in-up flex items-center gap-3 rounded-2xl border border-border-subtle bg-surface-raised/80 p-6 shadow-sm backdrop-blur">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-900/40">
                   <ShieldIcon className="h-5 w-5" />
                 </div>
-                <p className="text-sm text-slate-500">{t('dashboard.admin.rolesComingSoon')}</p>
+                <p className="text-sm text-content-secondary">{t('dashboard.admin.rolesComingSoon')}</p>
               </div>
             )}
           </div>

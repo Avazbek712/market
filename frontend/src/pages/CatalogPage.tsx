@@ -67,8 +67,8 @@ export default function CatalogPage() {
     <PublicLayout>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.25 }}>
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-slate-900">{t('catalog.title')}</h1>
-          <p className="text-sm text-slate-600">{t('catalog.subtitle')}</p>
+          <h1 className="text-2xl font-semibold text-content-primary">{t('catalog.title')}</h1>
+          <p className="text-sm text-content-secondary">{t('catalog.subtitle')}</p>
         </div>
 
         <FiltersBar categories={categories} filters={filters} onChange={handleFiltersChange} />
@@ -85,11 +85,11 @@ export default function CatalogPage() {
               whileHover={page === 0 ? undefined : { scale: 1.08 }}
               whileTap={page === 0 ? undefined : { scale: 0.92 }}
               transition={{ duration: 0.15 }}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 text-slate-600 transition-colors hover:bg-accent-50 hover:text-accent-600 disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-border-strong text-content-secondary transition-colors hover:bg-accent-50 hover:text-accent-600 disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-accent-900/40"
             >
               <ChevronLeftIcon className="h-4 w-4" />
             </motion.button>
-            <span className="text-sm text-slate-600">
+            <span className="text-sm text-content-secondary">
               {t('catalog.pagination.pageInfo', { current: page + 1, total: totalPages })}
             </span>
             <motion.button
@@ -100,7 +100,7 @@ export default function CatalogPage() {
               whileHover={page >= totalPages - 1 ? undefined : { scale: 1.08 }}
               whileTap={page >= totalPages - 1 ? undefined : { scale: 0.92 }}
               transition={{ duration: 0.15 }}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 text-slate-600 transition-colors hover:bg-accent-50 hover:text-accent-600 disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-border-strong text-content-secondary transition-colors hover:bg-accent-50 hover:text-accent-600 disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-accent-900/40"
             >
               <ChevronRightIcon className="h-4 w-4" />
             </motion.button>

@@ -19,9 +19,9 @@ export default function ProductCard({ product, categoryName }: { product: Produc
     >
       <Link
         to={`/products/${product.id}`}
-        className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white/80 shadow-sm backdrop-blur transition-shadow hover:shadow-lg hover:shadow-accent-500/10"
+        className="flex h-full flex-col overflow-hidden rounded-2xl border border-border-subtle bg-surface-raised/80 shadow-sm backdrop-blur transition-shadow hover:shadow-lg hover:shadow-accent-500/10"
       >
-        <div className="aspect-square w-full overflow-hidden bg-accent-50">
+        <div className="aspect-square w-full overflow-hidden bg-accent-50 dark:bg-accent-900/30">
           {product.imageIds.length > 0 ? (
             <motion.img
               src={productsApi.fileUrl(product.imageIds[0])}
@@ -37,9 +37,9 @@ export default function ProductCard({ product, categoryName }: { product: Produc
           )}
         </div>
         <div className="flex flex-1 flex-col gap-1 p-4">
-          <p className="line-clamp-2 font-medium text-slate-900">{product.name}</p>
-          {categoryName && <p className="text-xs text-slate-500">{categoryName}</p>}
-          <p className="mt-auto pt-2 text-lg font-semibold text-accent-600">
+          <p className="line-clamp-2 font-medium text-content-primary">{product.name}</p>
+          {categoryName && <p className="text-xs text-content-secondary">{categoryName}</p>}
+          <p className="mt-auto pt-2 text-lg font-semibold text-brand-600 dark:text-brand-400">
             {t('catalog.priceValue', { price: product.price })}
           </p>
         </div>

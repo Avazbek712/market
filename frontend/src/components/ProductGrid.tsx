@@ -9,12 +9,12 @@ const SKELETON_COUNT = 8
 
 function ProductCardSkeleton() {
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white/60">
-      <div className="aspect-square w-full animate-pulse bg-slate-200/70" />
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border-subtle bg-surface-raised/60">
+      <div className="aspect-square w-full animate-pulse bg-surface-sunken" />
       <div className="flex flex-1 flex-col gap-2 p-4">
-        <div className="h-4 w-3/4 animate-pulse rounded bg-slate-200/70" />
-        <div className="h-3 w-1/3 animate-pulse rounded bg-slate-200/70" />
-        <div className="mt-auto h-5 w-1/2 animate-pulse rounded bg-slate-200/70" />
+        <div className="h-4 w-3/4 animate-pulse rounded bg-surface-sunken" />
+        <div className="h-3 w-1/3 animate-pulse rounded bg-surface-sunken" />
+        <div className="mt-auto h-5 w-1/2 animate-pulse rounded bg-surface-sunken" />
       </div>
     </div>
   )
@@ -48,10 +48,10 @@ export default function ProductGrid({
   if (products.length === 0) {
     return (
       <div className="flex flex-col items-center gap-3 py-16 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent-50 text-accent-400">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent-50 text-accent-400 dark:bg-accent-900/40">
           <BoxIcon className="h-7 w-7" />
         </div>
-        <p className="text-sm text-slate-500">{t('catalog.empty')}</p>
+        <p className="text-sm text-content-secondary">{t('catalog.empty')}</p>
       </div>
     )
   }

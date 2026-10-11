@@ -1,3 +1,4 @@
+import { motion } from 'motion/react'
 import { useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
@@ -9,6 +10,7 @@ import { MailIcon, LockIcon, UserIcon } from '../components/FieldIcons'
 import FormField from '../components/FormField'
 import LanguageSwitcher from '../components/LanguageSwitcher'
 import SubmitButton from '../components/SubmitButton'
+import ThemeToggle from '../components/ThemeToggle'
 
 export default function RegisterPage() {
   const { t } = useTranslation()
@@ -48,7 +50,8 @@ export default function RegisterPage() {
 
   return (
     <div className="relative">
-      <div className="absolute right-4 top-4 z-20">
+      <div className="absolute right-4 top-4 z-20 flex items-center gap-2">
+        <ThemeToggle />
         <LanguageSwitcher />
       </div>
       <AuthCard title={t('auth.register.title')} subtitle={t('auth.register.subtitle')}>
@@ -89,21 +92,24 @@ export default function RegisterPage() {
           />
 
           <div className="animate-fade-in-up mb-4" style={{ animationDelay: '260ms' }}>
-            <span className="mb-1.5 block text-sm font-medium text-slate-600">{t('auth.register.roleLabel')}</span>
+            <span className="mb-1.5 block text-sm font-medium text-content-secondary">{t('auth.register.roleLabel')}</span>
             <div className="grid grid-cols-2 gap-2">
               {roles.map(({ value, label }) => (
-                <button
+                <motion.button
                   key={value}
                   type="button"
                   onClick={() => update('role', value)}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.96 }}
+                  transition={{ duration: 0.15 }}
                   className={`rounded-xl border px-3 py-2 text-sm font-medium transition-all duration-200 ${
                     form.role === value
-                      ? 'border-accent-500 bg-accent-50 text-accent-700 shadow-sm shadow-accent-500/20'
-                      : 'border-slate-300 text-slate-500 hover:border-slate-400'
+                      ? 'border-accent-500 bg-accent-50 text-accent-700 shadow-sm shadow-accent-500/20 dark:bg-accent-900/30 dark:text-accent-300'
+                      : 'border-border-strong text-content-secondary hover:border-accent-300'
                   }`}
                 >
                   {label}
-                </button>
+                </motion.button>
               ))}
             </div>
           </div>
@@ -118,9 +124,12 @@ export default function RegisterPage() {
               {submitting ? t('auth.register.submitting') : t('auth.register.submit')}
             </SubmitButton>
           </div>
-          <p className="animate-fade-in-up mt-5 text-center text-sm text-slate-500" style={{ animationDelay: '380ms' }}>
+          <p className="animate-fade-in-up mt-5 text-center text-sm text-content-secondary" style={{ animationDelay: '380ms' }}>
             {t('auth.register.haveAccount')}{' '}
-            <Link to="/login" className="font-medium text-accent-600 transition-colors hover:text-accent-700">
+            <Link
+              to="/login"
+              className="font-medium text-accent-600 transition-colors hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300"
+            >
               {t('auth.register.loginLink')}
             </Link>
           </p>

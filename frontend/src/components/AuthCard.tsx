@@ -1,6 +1,7 @@
 import type { ComponentType, ReactNode, SVGProps } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BoxIcon, ShoppingBagIcon, SparkleIcon, StarIcon, TagIcon } from './DecorativeIcons'
+import { LogoMark } from './Logo'
 
 const FLOATERS: {
   Icon: ComponentType<SVGProps<SVGSVGElement>>
@@ -30,10 +31,10 @@ export default function AuthCard({
 
   return (
     <div className="flex min-h-screen">
-      <div className="relative hidden w-1/2 items-center justify-center overflow-hidden bg-gradient-to-br from-accent-600 via-accent-500 to-fuchsia-500 lg:flex">
+      <div className="relative hidden w-1/2 items-center justify-center overflow-hidden bg-gradient-to-br from-brand-600 via-brand-500 to-accent-500 lg:flex">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="animate-blob absolute -left-24 -top-24 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
-          <div className="animate-blob absolute -right-16 bottom-0 h-80 w-80 rounded-full bg-fuchsia-300/20 blur-3xl [animation-delay:3s]" />
+          <div className="animate-blob absolute -right-16 bottom-0 h-80 w-80 rounded-full bg-accent-300/20 blur-3xl [animation-delay:3s]" />
         </div>
 
         {FLOATERS.map(({ Icon, top, left, size, duration, delay }, index) => (
@@ -46,8 +47,8 @@ export default function AuthCard({
         ))}
 
         <div className="relative z-10 max-w-sm px-10 text-center text-white">
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 text-3xl font-bold backdrop-blur-md">
-            M
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 p-2.5 backdrop-blur-md">
+            <LogoMark className="h-full w-full" />
           </div>
           <h2 className="text-3xl font-bold">{t('common.appName')}</h2>
           <p className="mt-3 text-white/85">{t('auth.visual.tagline')}</p>
@@ -60,14 +61,14 @@ export default function AuthCard({
           <div className="animate-blob absolute -right-16 bottom-[-4rem] h-72 w-72 rounded-full bg-accent-200/30 blur-3xl [animation-delay:4s]" />
         </div>
 
-        <div className="animate-fade-in-up relative w-full max-w-sm rounded-2xl border border-slate-200/80 bg-white/80 p-8 shadow-xl shadow-accent-500/10 backdrop-blur-xl">
+        <div className="animate-fade-in-up relative w-full max-w-sm rounded-2xl border border-border-subtle bg-surface-raised/80 p-8 shadow-xl shadow-accent-500/10 backdrop-blur-xl">
           <div className="mb-6 flex flex-col items-center text-center">
-            <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-accent-400 to-accent-600 text-lg font-bold text-white shadow-lg shadow-accent-500/30 lg:hidden">
-              M
+            <div className="mb-3 lg:hidden">
+              <LogoMark className="h-11 w-11 shadow-lg shadow-brand-500/30" />
             </div>
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">{t('common.appName')}</p>
-            <h1 className="mt-1 text-2xl font-semibold text-slate-900">{title}</h1>
-            {subtitle && <p className="mt-1.5 text-sm text-slate-500">{subtitle}</p>}
+            <p className="text-xs font-medium uppercase tracking-wide text-content-secondary">{t('common.appName')}</p>
+            <h1 className="mt-1 text-2xl font-semibold text-content-primary">{title}</h1>
+            {subtitle && <p className="mt-1.5 text-sm text-content-secondary">{subtitle}</p>}
           </div>
           {children}
         </div>

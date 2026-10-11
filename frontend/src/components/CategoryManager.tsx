@@ -1,3 +1,4 @@
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { Fragment, useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as categoriesApi from '../api/categories'
@@ -31,14 +32,14 @@ function ParentSelect({
 }) {
   return (
     <div className="mb-4">
-      <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-slate-600">
+      <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-content-secondary">
         {label}
       </label>
       <select
         id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none transition-all duration-200 focus:border-accent-500 focus:ring-4 focus:ring-accent-500/15"
+        className="w-full rounded-xl border border-border-strong bg-surface-raised px-3 py-2.5 text-content-primary outline-none transition-all duration-200 focus:border-accent-500 focus:ring-4 focus:ring-accent-500/15"
       >
         <option value="">—</option>
         {options.map((option) => (
@@ -66,6 +67,8 @@ export default function CategoryManager() {
 
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<number | null>(null)
   const [deleteSubmittingId, setDeleteSubmittingId] = useState<number | null>(null)
+
+  const [listRef] = useAutoAnimate()
 
   useEffect(() => {
     void loadCategories()
@@ -153,7 +156,7 @@ export default function CategoryManager() {
     return (
       <li
         key={category.id}
-        className={`animate-fade-in-up rounded-xl border border-slate-200 px-4 py-3 ${isChild ? 'ml-7 border-l-2 border-l-accent-200' : ''}`}
+        className={`animate-fade-in-up rounded-xl border border-border-subtle px-4 py-3 ${isChild ? 'ml-7 border-l-2 border-l-accent-200' : ''}`}
         style={{ animationDelay: `${Math.min(index * 40, 320)}ms` }}
       >
         {editingId === category.id ? (
@@ -187,7 +190,7 @@ export default function CategoryManager() {
               <button
                 type="button"
                 onClick={() => setEditingId(null)}
-                className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
+                className="rounded-lg border border-border-strong px-4 py-2.5 text-sm font-medium text-content-secondary transition-colors hover:bg-surface-sunken"
               >
                 {t('dashboard.admin.categories.cancel')}
               </button>
@@ -195,7 +198,7 @@ export default function CategoryManager() {
           </form>
         ) : confirmingDeleteId === category.id ? (
           <div className="flex items-center justify-between gap-3">
-            <span className="text-sm text-slate-700">
+            <span className="text-sm text-content-primary">
               {t('dashboard.admin.categories.confirmDelete', { name: category.name })}
             </span>
             <div className="flex shrink-0 gap-2">
@@ -210,7 +213,7 @@ export default function CategoryManager() {
               <button
                 type="button"
                 onClick={() => setConfirmingDeleteId(null)}
-                className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
+                className="rounded-lg border border-border-strong px-3 py-1.5 text-sm font-medium text-content-secondary transition-colors hover:bg-surface-sunken"
               >
                 {t('dashboard.admin.categories.cancel')}
               </button>
@@ -221,9 +224,9 @@ export default function CategoryManager() {
             <div className="flex min-w-0 items-center gap-3">
               <TagIcon className={`shrink-0 text-accent-500 ${isChild ? 'h-3.5 w-3.5' : 'h-4 w-4'}`} />
               <div className="min-w-0">
-                <p className="truncate font-medium text-slate-900">{category.name}</p>
+                <p className="truncate font-medium text-content-primary">{category.name}</p>
                 {category.description && (
-                  <p className="truncate text-sm text-slate-500">{category.description}</p>
+                  <p className="truncate text-sm text-content-secondary">{category.description}</p>
                 )}
               </div>
             </div>
@@ -232,7 +235,7 @@ export default function CategoryManager() {
                 type="button"
                 onClick={() => startEdit(category)}
                 aria-label={t('dashboard.admin.categories.edit')}
-                className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-accent-50 hover:text-accent-600"
+                className="rounded-lg p-2 text-content-secondary transition-colors hover:bg-accent-50 hover:text-accent-600 dark:hover:bg-accent-900/40"
               >
                 <PencilIcon className="h-4 w-4" />
               </button>
@@ -240,7 +243,7 @@ export default function CategoryManager() {
                 type="button"
                 onClick={() => setConfirmingDeleteId(category.id)}
                 aria-label={t('dashboard.admin.categories.delete')}
-                className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-red-50 hover:text-red-600"
+                className="rounded-lg p-2 text-content-secondary transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30"
               >
                 <TrashIcon className="h-4 w-4" />
               </button>
@@ -252,18 +255,18 @@ export default function CategoryManager() {
   }
 
   return (
-    <div className="animate-fade-in-up rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur">
+    <div className="animate-fade-in-up rounded-2xl border border-border-subtle bg-surface-raised/80 p-6 shadow-sm backdrop-blur">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-50 text-accent-600">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-900/40">
             <TagIcon className="h-5 w-5" />
           </div>
-          <h2 className="text-lg font-semibold text-slate-900">{t('dashboard.admin.categories.title')}</h2>
+          <h2 className="text-lg font-semibold text-content-primary">{t('dashboard.admin.categories.title')}</h2>
         </div>
         <button
           type="button"
           onClick={() => setShowAddForm((prev) => !prev)}
-          className="flex items-center gap-1.5 rounded-lg bg-accent-500 px-3 py-1.5 text-sm font-medium text-white transition-all hover:bg-accent-600 active:scale-[0.98]"
+          className="flex items-center gap-1.5 rounded-lg bg-brand-500 px-3 py-1.5 text-sm font-medium text-white transition-all hover:bg-brand-600 active:scale-[0.98]"
         >
           {showAddForm ? <XIcon className="h-4 w-4" /> : <PlusIcon className="h-4 w-4" />}
           {t('dashboard.admin.categories.addButton')}
@@ -279,7 +282,7 @@ export default function CategoryManager() {
       {showAddForm && (
         <form
           onSubmit={handleAdd}
-          className="animate-fade-in-up mb-5 rounded-xl border border-accent-200 bg-accent-50/40 p-4"
+          className="animate-fade-in-up mb-5 rounded-xl border border-accent-200 bg-accent-50/40 p-4 dark:border-accent-800 dark:bg-accent-900/20"
         >
           <FormField
             id="new-category-name"
@@ -308,14 +311,14 @@ export default function CategoryManager() {
       )}
 
       {categories === null && (
-        <p className="py-6 text-center text-sm text-slate-500">{t('dashboard.admin.categories.loading')}</p>
+        <p className="py-6 text-center text-sm text-content-secondary">{t('dashboard.admin.categories.loading')}</p>
       )}
 
       {categories !== null && categories.length === 0 && (
-        <p className="py-6 text-center text-sm text-slate-500">{t('dashboard.admin.categories.empty')}</p>
+        <p className="py-6 text-center text-sm text-content-secondary">{t('dashboard.admin.categories.empty')}</p>
       )}
 
-      <ul className="space-y-2">
+      <ul ref={listRef} className="space-y-2">
         {topLevelCategories.map((category, index) => (
           <Fragment key={category.id}>
             {renderRow(category, index, false)}

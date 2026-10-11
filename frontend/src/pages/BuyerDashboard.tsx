@@ -6,8 +6,8 @@ export default function BuyerDashboard() {
 
   return (
     <DashboardLayout>
-      <div className="rounded-2xl border border-blue-200 bg-blue-50/60 p-8">
-        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+      <div className="rounded-2xl border border-blue-200 bg-blue-50/60 p-8 dark:border-blue-800 dark:bg-blue-900/20">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300">
           <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path
               d="M6 6h15l-1.5 9h-12L6 6zm0 0L5 3H2m5 15a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm10 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3z"
@@ -18,8 +18,8 @@ export default function BuyerDashboard() {
             />
           </svg>
         </div>
-        <h1 className="mb-1 text-xl font-semibold text-slate-900">{t('dashboard.buyer.title')}</h1>
-        <p className="text-sm text-slate-600">{t('dashboard.buyer.subtitle')}</p>
+        <h1 className="mb-1 text-xl font-semibold text-content-primary">{t('dashboard.buyer.title')}</h1>
+        <p className="text-sm text-content-secondary">{t('dashboard.buyer.subtitle')}</p>
       </div>
     </DashboardLayout>
   )

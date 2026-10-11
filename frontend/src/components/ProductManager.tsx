@@ -1,3 +1,4 @@
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as categoriesApi from '../api/categories'
@@ -45,14 +46,14 @@ function CategorySelect({
 }) {
   return (
     <div className="mb-4">
-      <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-slate-600">
+      <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-content-secondary">
         {label}
       </label>
       <select
         id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none transition-all duration-200 focus:border-accent-500 focus:ring-4 focus:ring-accent-500/15"
+        className="w-full rounded-xl border border-border-strong bg-surface-raised px-3 py-2.5 text-content-primary outline-none transition-all duration-200 focus:border-accent-500 focus:ring-4 focus:ring-accent-500/15"
       >
         <option value="">—</option>
         {options.map((option) => (
@@ -82,6 +83,8 @@ export default function ProductManager() {
 
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<number | null>(null)
   const [deleteSubmittingId, setDeleteSubmittingId] = useState<number | null>(null)
+
+  const [listRef] = useAutoAnimate()
 
   useEffect(() => {
     void loadProducts()
@@ -189,7 +192,7 @@ export default function ProductManager() {
     return (
       <li
         key={product.id}
-        className="animate-fade-in-up rounded-xl border border-slate-200 px-4 py-3"
+        className="animate-fade-in-up rounded-xl border border-border-subtle px-4 py-3"
         style={{ animationDelay: `${Math.min(index * 40, 320)}ms` }}
       >
         {editingId === product.id ? (
@@ -242,7 +245,7 @@ export default function ProductManager() {
               <button
                 type="button"
                 onClick={() => setEditingId(null)}
-                className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
+                className="rounded-lg border border-border-strong px-4 py-2.5 text-sm font-medium text-content-secondary transition-colors hover:bg-surface-sunken"
               >
                 {t('dashboard.seller.products.cancel')}
               </button>
@@ -250,7 +253,7 @@ export default function ProductManager() {
           </form>
         ) : confirmingDeleteId === product.id ? (
           <div className="flex items-center justify-between gap-3">
-            <span className="text-sm text-slate-700">
+            <span className="text-sm text-content-primary">
               {t('dashboard.seller.products.confirmDelete', { name: product.name })}
             </span>
             <div className="flex shrink-0 gap-2">
@@ -265,7 +268,7 @@ export default function ProductManager() {
               <button
                 type="button"
                 onClick={() => setConfirmingDeleteId(null)}
-                className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
+                className="rounded-lg border border-border-strong px-3 py-1.5 text-sm font-medium text-content-secondary transition-colors hover:bg-surface-sunken"
               >
                 {t('dashboard.seller.products.cancel')}
               </button>
@@ -278,16 +281,16 @@ export default function ProductManager() {
                 <img
                   src={productsApi.fileUrl(product.imageIds[0])}
                   alt={product.name}
-                  className="h-12 w-12 shrink-0 rounded-lg border border-slate-200 object-cover"
+                  className="h-12 w-12 shrink-0 rounded-lg border border-border-subtle object-cover"
                 />
               ) : (
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-accent-50 text-accent-600">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-900/40">
                   <BoxIcon className="h-5 w-5" />
                 </div>
               )}
               <div className="min-w-0">
-                <p className="truncate font-medium text-slate-900">{product.name}</p>
-                <p className="truncate text-sm text-slate-500">
+                <p className="truncate font-medium text-content-primary">{product.name}</p>
+                <p className="truncate text-sm text-content-secondary">
                   {t('dashboard.seller.products.priceAndQty', { price: product.price, count: product.quantity })}
                   {categoryName(product.categoryId) ? ` · ${categoryName(product.categoryId)}` : ''}
                 </p>
@@ -298,7 +301,7 @@ export default function ProductManager() {
                 type="button"
                 onClick={() => startEdit(product)}
                 aria-label={t('dashboard.seller.products.edit')}
-                className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-accent-50 hover:text-accent-600"
+                className="rounded-lg p-2 text-content-secondary transition-colors hover:bg-accent-50 hover:text-accent-600 dark:hover:bg-accent-900/40"
               >
                 <PencilIcon className="h-4 w-4" />
               </button>
@@ -306,7 +309,7 @@ export default function ProductManager() {
                 type="button"
                 onClick={() => setConfirmingDeleteId(product.id)}
                 aria-label={t('dashboard.seller.products.delete')}
-                className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-red-50 hover:text-red-600"
+                className="rounded-lg p-2 text-content-secondary transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30"
               >
                 <TrashIcon className="h-4 w-4" />
               </button>
@@ -318,18 +321,18 @@ export default function ProductManager() {
   }
 
   return (
-    <div className="animate-fade-in-up rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur">
+    <div className="animate-fade-in-up rounded-2xl border border-border-subtle bg-surface-raised/80 p-6 shadow-sm backdrop-blur">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-50 text-accent-600">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-900/40">
             <BoxIcon className="h-5 w-5" />
           </div>
-          <h2 className="text-lg font-semibold text-slate-900">{t('dashboard.seller.products.title')}</h2>
+          <h2 className="text-lg font-semibold text-content-primary">{t('dashboard.seller.products.title')}</h2>
         </div>
         <button
           type="button"
           onClick={() => setShowAddForm((prev) => !prev)}
-          className="flex items-center gap-1.5 rounded-lg bg-accent-500 px-3 py-1.5 text-sm font-medium text-white transition-all hover:bg-accent-600 active:scale-[0.98]"
+          className="flex items-center gap-1.5 rounded-lg bg-brand-500 px-3 py-1.5 text-sm font-medium text-white transition-all hover:bg-brand-600 active:scale-[0.98]"
         >
           {showAddForm ? <XIcon className="h-4 w-4" /> : <PlusIcon className="h-4 w-4" />}
           {t('dashboard.seller.products.addButton')}
@@ -345,7 +348,7 @@ export default function ProductManager() {
       {showAddForm && (
         <form
           onSubmit={handleAdd}
-          className="animate-fade-in-up mb-5 rounded-xl border border-accent-200 bg-accent-50/40 p-4"
+          className="animate-fade-in-up mb-5 rounded-xl border border-accent-200 bg-accent-50/40 p-4 dark:border-accent-800 dark:bg-accent-900/20"
         >
           <FormField
             id="new-product-name"
@@ -389,7 +392,7 @@ export default function ProductManager() {
             options={categories}
           />
           <div className="mb-4">
-            <label htmlFor="new-product-images" className="mb-1.5 block text-sm font-medium text-slate-600">
+            <label htmlFor="new-product-images" className="mb-1.5 block text-sm font-medium text-content-secondary">
               {t('dashboard.seller.products.imagesLabel')}
             </label>
             <input
@@ -398,7 +401,7 @@ export default function ProductManager() {
               accept="image/*"
               multiple
               onChange={handleImagesChange}
-              className="block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-accent-500 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-accent-600"
+              className="block w-full text-sm text-content-secondary file:mr-3 file:rounded-lg file:border-0 file:bg-accent-500 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-accent-600"
             />
           </div>
           <SubmitButton submitting={addSubmitting}>
@@ -408,14 +411,14 @@ export default function ProductManager() {
       )}
 
       {products === null && (
-        <p className="py-6 text-center text-sm text-slate-500">{t('dashboard.seller.products.loading')}</p>
+        <p className="py-6 text-center text-sm text-content-secondary">{t('dashboard.seller.products.loading')}</p>
       )}
 
       {products !== null && products.length === 0 && (
-        <p className="py-6 text-center text-sm text-slate-500">{t('dashboard.seller.products.empty')}</p>
+        <p className="py-6 text-center text-sm text-content-secondary">{t('dashboard.seller.products.empty')}</p>
       )}
 
-      <ul className="space-y-2">{products?.map((product, index) => renderRow(product, index))}</ul>
+      <ul ref={listRef} className="space-y-2">{products?.map((product, index) => renderRow(product, index))}</ul>
     </div>
   )
 }

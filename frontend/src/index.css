@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Drive `dark:` utilities off the manual .dark class (set by ThemeToggle),
+   not just prefers-color-scheme — matches the semantic token overrides below. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* Brand — ember orange (primary CTA, logo accent) */
   --color-brand-50: #fdf4f0;
