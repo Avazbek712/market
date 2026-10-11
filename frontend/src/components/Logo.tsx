@@ -40,7 +40,7 @@ export default function Logo({ className = '' }: { className?: string }) {
       >
         <LogoMark />
       </motion.span>
-      <span className="font-heading text-lg font-semibold text-slate-900">{t('common.appName')}</span>
+      <span className="font-heading text-lg font-semibold text-content-primary">{t('common.appName')}</span>
     </Link>
   )
 }

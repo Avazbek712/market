@@ -1,7 +1,11 @@
 {
   "common": {
     "appName": "MiniMarket",
-    "logout": "Log out"
+    "logout": "Log out",
+    "theme": {
+      "toDark": "Switch to dark theme",
+      "toLight": "Switch to light theme"
+    }
   },
   "auth": {
     "visual": {

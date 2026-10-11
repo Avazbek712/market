@@ -61,14 +61,14 @@ export default function AuthCard({
           <div className="animate-blob absolute -right-16 bottom-[-4rem] h-72 w-72 rounded-full bg-accent-200/30 blur-3xl [animation-delay:4s]" />
         </div>
 
-        <div className="animate-fade-in-up relative w-full max-w-sm rounded-2xl border border-slate-200/80 bg-white/80 p-8 shadow-xl shadow-accent-500/10 backdrop-blur-xl">
+        <div className="animate-fade-in-up relative w-full max-w-sm rounded-2xl border border-border-subtle bg-surface-raised/80 p-8 shadow-xl shadow-accent-500/10 backdrop-blur-xl">
           <div className="mb-6 flex flex-col items-center text-center">
             <div className="mb-3 lg:hidden">
               <LogoMark className="h-11 w-11 shadow-lg shadow-brand-500/30" />
             </div>
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">{t('common.appName')}</p>
-            <h1 className="mt-1 text-2xl font-semibold text-slate-900">{title}</h1>
-            {subtitle && <p className="mt-1.5 text-sm text-slate-500">{subtitle}</p>}
+            <p className="text-xs font-medium uppercase tracking-wide text-content-secondary">{t('common.appName')}</p>
+            <h1 className="mt-1 text-2xl font-semibold text-content-primary">{title}</h1>
+            {subtitle && <p className="mt-1.5 text-sm text-content-secondary">{subtitle}</p>}
           </div>
           {children}
         </div>

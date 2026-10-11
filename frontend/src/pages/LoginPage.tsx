@@ -9,6 +9,7 @@ import { MailIcon, LockIcon } from '../components/FieldIcons'
 import FormField from '../components/FormField'
 import LanguageSwitcher from '../components/LanguageSwitcher'
 import SubmitButton from '../components/SubmitButton'
+import ThemeToggle from '../components/ThemeToggle'
 
 export default function LoginPage() {
   const { t } = useTranslation()
@@ -37,12 +38,13 @@ export default function LoginPage() {
 
   return (
     <div className="relative">
-      <div className="absolute right-4 top-4 z-20">
+      <div className="absolute right-4 top-4 z-20 flex items-center gap-2">
+        <ThemeToggle />
         <LanguageSwitcher />
       </div>
       <AuthCard title={t('auth.login.title')} subtitle={t('auth.login.subtitle')}>
         {justRegistered && (
-          <p className="animate-fade-in-up mb-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+          <p className="animate-fade-in-up mb-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
             {t('auth.login.registeredSuccess')}
           </p>
         )}
@@ -79,9 +81,12 @@ export default function LoginPage() {
               {submitting ? t('auth.login.submitting') : t('auth.login.submit')}
             </SubmitButton>
           </div>
-          <p className="animate-fade-in-up mt-5 text-center text-sm text-slate-500" style={{ animationDelay: '300ms' }}>
+          <p className="animate-fade-in-up mt-5 text-center text-sm text-content-secondary" style={{ animationDelay: '300ms' }}>
             {t('auth.login.noAccount')}{' '}
-            <Link to="/register" className="font-medium text-accent-600 transition-colors hover:text-accent-700">
+            <Link
+              to="/register"
+              className="font-medium text-accent-600 transition-colors hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300"
+            >
               {t('auth.login.registerLink')}
             </Link>
           </p>

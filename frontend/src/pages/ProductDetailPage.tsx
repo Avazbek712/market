@@ -53,7 +53,7 @@ export default function ProductDetailPage() {
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.25 }}>
         <Link
           to="/"
-          className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 transition-colors hover:text-accent-600"
+          className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-content-secondary transition-colors hover:text-accent-600"
         >
           <ChevronLeftIcon className="h-4 w-4" />
           {t('productDetail.back')}
@@ -63,17 +63,17 @@ export default function ProductDetailPage() {
 
         {!loading && error && (
           <div className="flex flex-col items-center gap-3 py-16 text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent-50 text-accent-400">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent-50 text-accent-400 dark:bg-accent-900/40">
               <BoxIcon className="h-7 w-7" />
             </div>
-            <p className="text-sm text-slate-500">{error}</p>
+            <p className="text-sm text-content-secondary">{error}</p>
           </div>
         )}
 
         {!loading && !error && product && (
           <div className="grid gap-8 md:grid-cols-2">
             <div>
-              <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-slate-200 bg-accent-50">
+              <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-border-subtle bg-accent-50 dark:bg-accent-900/30">
                 {product.imageIds.length > 0 ? (
                   <AnimatePresence mode="wait">
                     <motion.img
@@ -115,23 +115,26 @@ export default function ProductDetailPage() {
             </div>
 
             <div>
-              <h1 className="text-2xl font-semibold text-slate-900">{product.name}</h1>
-              {categoryName && <p className="mt-1 text-sm text-slate-500">{categoryName}</p>}
-              <p className="mt-4 text-3xl font-semibold text-brand-600">
+              <h1 className="text-2xl font-semibold text-content-primary">{product.name}</h1>
+              {categoryName && <p className="mt-1 text-sm text-content-secondary">{categoryName}</p>}
+              <p className="mt-4 text-3xl font-semibold text-brand-600 dark:text-brand-400">
                 {t('catalog.priceValue', { price: product.price })}
               </p>
 
-              <p className="mt-2 text-sm font-medium text-slate-600">
+              <p className="mt-2 text-sm font-medium text-content-secondary">
                 {product.quantity > 0
                   ? t('productDetail.inStock', { count: product.quantity })
                   : t('productDetail.outOfStock')}
               </p>
 
-              {product.description && <p className="mt-6 whitespace-pre-line text-slate-700">{product.description}</p>}
+              {product.description && (
+                <p className="mt-6 whitespace-pre-line text-content-primary">{product.description}</p>
+              )}
 
               {product.sellerName && (
-                <p className="mt-6 text-sm text-slate-500">
-                  {t('productDetail.seller')}: <span className="font-medium text-slate-700">{product.sellerName}</span>
+                <p className="mt-6 text-sm text-content-secondary">
+                  {t('productDetail.seller')}:{' '}
+                  <span className="font-medium text-content-primary">{product.sellerName}</span>
                 </p>
               )}
             </div>

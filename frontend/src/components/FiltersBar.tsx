@@ -21,6 +21,10 @@ export interface Filters {
 
 export const EMPTY_FILTERS: Filters = { categoryId: '', search: '', minPrice: '', maxPrice: '', sort: 'newest' }
 
+const INPUT_CLASSES =
+  'rounded-xl border border-border-strong bg-surface-raised text-content-primary outline-none transition-all duration-200 focus:border-accent-500 focus:ring-4 focus:ring-accent-500/15'
+const LABEL_CLASSES = 'mb-1.5 block text-sm font-medium text-content-secondary'
+
 export default function FiltersBar({
   categories,
   filters,
@@ -45,13 +49,13 @@ export default function FiltersBar({
   }, [searchInput])
 
   return (
-    <div className="mb-6 flex flex-wrap items-end gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 backdrop-blur">
+    <div className="mb-6 flex flex-wrap items-end gap-3 rounded-2xl border border-border-subtle bg-surface-raised/80 p-4 backdrop-blur">
       <div className="min-w-[200px] flex-1">
-        <label htmlFor="filter-search" className="mb-1.5 block text-sm font-medium text-slate-600">
+        <label htmlFor="filter-search" className={LABEL_CLASSES}>
           {t('catalog.filters.searchLabel')}
         </label>
         <div className="relative">
-          <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400">
+          <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-content-secondary">
             <SearchIcon className="h-4 w-4" />
           </span>
           <input
@@ -60,20 +64,20 @@ export default function FiltersBar({
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder={t('catalog.filters.searchPlaceholder')}
-            className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-3 text-slate-900 outline-none transition-all duration-200 focus:border-accent-500 focus:ring-4 focus:ring-accent-500/15"
+            className={`w-full py-2.5 pl-10 pr-3 ${INPUT_CLASSES}`}
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor="filter-category" className="mb-1.5 block text-sm font-medium text-slate-600">
+        <label htmlFor="filter-category" className={LABEL_CLASSES}>
           {t('catalog.filters.categoryLabel')}
         </label>
         <select
           id="filter-category"
           value={filters.categoryId}
           onChange={(e) => onChange({ ...filters, categoryId: e.target.value })}
-          className="rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none transition-all duration-200 focus:border-accent-500 focus:ring-4 focus:ring-accent-500/15"
+          className={`px-3 py-2.5 ${INPUT_CLASSES}`}
         >
           <option value="">{t('catalog.filters.categoryAll')}</option>
           {categories.map((category) => (
@@ -86,7 +90,7 @@ export default function FiltersBar({
 
       <div className="flex items-end gap-2">
         <div>
-          <label htmlFor="filter-min-price" className="mb-1.5 block text-sm font-medium text-slate-600">
+          <label htmlFor="filter-min-price" className={LABEL_CLASSES}>
             {t('catalog.filters.minPriceLabel')}
           </label>
           <input
@@ -96,11 +100,11 @@ export default function FiltersBar({
             step="0.01"
             value={filters.minPrice}
             onChange={(e) => onChange({ ...filters, minPrice: e.target.value })}
-            className="w-24 rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none transition-all duration-200 focus:border-accent-500 focus:ring-4 focus:ring-accent-500/15"
+            className={`w-24 px-3 py-2.5 ${INPUT_CLASSES}`}
           />
         </div>
         <div>
-          <label htmlFor="filter-max-price" className="mb-1.5 block text-sm font-medium text-slate-600">
+          <label htmlFor="filter-max-price" className={LABEL_CLASSES}>
             {t('catalog.filters.maxPriceLabel')}
           </label>
           <input
@@ -110,20 +114,20 @@ export default function FiltersBar({
             step="0.01"
             value={filters.maxPrice}
             onChange={(e) => onChange({ ...filters, maxPrice: e.target.value })}
-            className="w-24 rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none transition-all duration-200 focus:border-accent-500 focus:ring-4 focus:ring-accent-500/15"
+            className={`w-24 px-3 py-2.5 ${INPUT_CLASSES}`}
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor="filter-sort" className="mb-1.5 block text-sm font-medium text-slate-600">
+        <label htmlFor="filter-sort" className={LABEL_CLASSES}>
           {t('catalog.filters.sortLabel')}
         </label>
         <select
           id="filter-sort"
           value={filters.sort}
           onChange={(e) => onChange({ ...filters, sort: e.target.value as SortOption })}
-          className="rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none transition-all duration-200 focus:border-accent-500 focus:ring-4 focus:ring-accent-500/15"
+          className={`px-3 py-2.5 ${INPUT_CLASSES}`}
         >
           <option value="newest">{t('catalog.filters.sortNewest')}</option>
           <option value="priceAsc">{t('catalog.filters.sortPriceAsc')}</option>

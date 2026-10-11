@@ -6,6 +6,7 @@ import { useAuth } from '../auth/AuthContext'
 import { DASHBOARD_PATH } from '../auth/roles'
 import LanguageSwitcher from './LanguageSwitcher'
 import Logo from './Logo'
+import ThemeToggle from './ThemeToggle'
 
 const MotionLink = motion.create(Link)
 
@@ -48,19 +49,20 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
         <div className="animate-blob absolute bottom-[-6rem] left-1/3 h-72 w-72 rounded-full bg-accent-50 blur-3xl [animation-delay:6s]" />
       </div>
 
-      <header className="relative z-10 flex items-center justify-between border-b border-slate-200 bg-white/70 px-6 py-4 backdrop-blur">
+      <header className="relative z-10 flex items-center justify-between border-b border-border-subtle bg-surface-raised/70 px-6 py-4 backdrop-blur">
         <Logo />
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           <LanguageSwitcher />
           {status === 'authenticated' && me ? (
             <>
-              <span className="hidden text-sm text-slate-500 sm:inline">{me.fullName || me.email}</span>
+              <span className="hidden text-sm text-content-secondary sm:inline">{me.fullName || me.email}</span>
               <MotionLink
                 to={DASHBOARD_PATH[me.role]}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.96 }}
                 transition={{ duration: 0.15 }}
-                className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:border-accent-300 hover:bg-accent-50 hover:text-accent-600"
+                className="rounded-lg border border-border-strong px-3 py-1.5 text-sm font-medium text-content-secondary transition-colors hover:border-accent-300 hover:bg-accent-50 hover:text-accent-600 dark:hover:bg-accent-900/40"
               >
                 {t('catalog.header.dashboard')}
               </MotionLink>
@@ -70,7 +72,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.96 }}
                 transition={{ duration: 0.15 }}
-                className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+                className="rounded-lg border border-border-strong px-3 py-1.5 text-sm font-medium text-content-secondary transition-colors hover:border-red-300 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30"
               >
                 {t('common.logout')}
               </motion.button>
@@ -82,7 +84,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.96 }}
                 transition={{ duration: 0.15 }}
-                className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:border-accent-300 hover:bg-accent-50 hover:text-accent-600"
+                className="rounded-lg border border-border-strong px-3 py-1.5 text-sm font-medium text-content-secondary transition-colors hover:border-accent-300 hover:bg-accent-50 hover:text-accent-600 dark:hover:bg-accent-900/40"
               >
                 {t('catalog.header.login')}
               </MotionLink>
