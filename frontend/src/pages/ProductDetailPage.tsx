@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router-dom'
@@ -73,13 +73,20 @@ export default function ProductDetailPage() {
         {!loading && !error && product && (
           <div className="grid gap-8 md:grid-cols-2">
             <div>
-              <div className="aspect-square w-full overflow-hidden rounded-2xl border border-slate-200 bg-accent-50">
+              <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-slate-200 bg-accent-50">
                 {product.imageIds.length > 0 ? (
-                  <img
-                    src={productsApi.fileUrl(product.imageIds[activeImage])}
-                    alt={product.name}
-                    className="h-full w-full object-cover"
-                  />
+                  <AnimatePresence mode="wait">
+                    <motion.img
+                      key={product.imageIds[activeImage]}
+                      src={productsApi.fileUrl(product.imageIds[activeImage])}
+                      alt={product.name}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2, ease: 'easeOut' }}
+                      className="absolute inset-0 h-full w-full object-cover"
+                    />
+                  </AnimatePresence>
                 ) : (
                   <div className="flex h-full w-full items-center justify-center text-accent-300">
                     <BoxIcon className="h-16 w-16" />
@@ -89,16 +96,19 @@ export default function ProductDetailPage() {
               {product.imageIds.length > 1 && (
                 <div className="mt-3 flex gap-2">
                   {product.imageIds.map((imageId, index) => (
-                    <button
+                    <motion.button
                       key={imageId}
                       type="button"
                       onClick={() => setActiveImage(index)}
+                      whileHover={{ scale: 1.08 }}
+                      whileTap={{ scale: 0.92 }}
+                      transition={{ duration: 0.15 }}
                       className={`h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 transition-colors ${
                         index === activeImage ? 'border-accent-500' : 'border-transparent'
                       }`}
                     >
                       <img src={productsApi.fileUrl(imageId)} alt="" className="h-full w-full object-cover" />
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               )}
