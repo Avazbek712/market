@@ -39,7 +39,7 @@ export default function ProductCard({ product, categoryName }: { product: Produc
         <div className="flex flex-1 flex-col gap-1 p-4">
           <p className="line-clamp-2 font-medium text-slate-900">{product.name}</p>
           {categoryName && <p className="text-xs text-slate-500">{categoryName}</p>}
-          <p className="mt-auto pt-2 text-lg font-semibold text-accent-600">
+          <p className="mt-auto pt-2 text-lg font-semibold text-brand-600">
             {t('catalog.priceValue', { price: product.price })}
           </p>
         </div>

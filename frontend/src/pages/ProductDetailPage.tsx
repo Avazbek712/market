@@ -117,7 +117,7 @@ export default function ProductDetailPage() {
             <div>
               <h1 className="text-2xl font-semibold text-slate-900">{product.name}</h1>
               {categoryName && <p className="mt-1 text-sm text-slate-500">{categoryName}</p>}
-              <p className="mt-4 text-3xl font-semibold text-accent-600">
+              <p className="mt-4 text-3xl font-semibold text-brand-600">
                 {t('catalog.priceValue', { price: product.price })}
               </p>
 

@@ -1,3 +1,4 @@
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as categoriesApi from '../api/categories'
@@ -82,6 +83,8 @@ export default function ProductManager() {
 
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<number | null>(null)
   const [deleteSubmittingId, setDeleteSubmittingId] = useState<number | null>(null)
+
+  const [listRef] = useAutoAnimate()
 
   useEffect(() => {
     void loadProducts()
@@ -329,7 +332,7 @@ export default function ProductManager() {
         <button
           type="button"
           onClick={() => setShowAddForm((prev) => !prev)}
-          className="flex items-center gap-1.5 rounded-lg bg-accent-500 px-3 py-1.5 text-sm font-medium text-white transition-all hover:bg-accent-600 active:scale-[0.98]"
+          className="flex items-center gap-1.5 rounded-lg bg-brand-500 px-3 py-1.5 text-sm font-medium text-white transition-all hover:bg-brand-600 active:scale-[0.98]"
         >
           {showAddForm ? <XIcon className="h-4 w-4" /> : <PlusIcon className="h-4 w-4" />}
           {t('dashboard.seller.products.addButton')}
@@ -415,7 +418,7 @@ export default function ProductManager() {
         <p className="py-6 text-center text-sm text-slate-500">{t('dashboard.seller.products.empty')}</p>
       )}
 
-      <ul className="space-y-2">{products?.map((product, index) => renderRow(product, index))}</ul>
+      <ul ref={listRef} className="space-y-2">{products?.map((product, index) => renderRow(product, index))}</ul>
     </div>
   )
 }
