@@ -142,9 +142,16 @@
       "manageRoles": "Управление ролями",
       "nav": {
         "categories": "Категории",
+        "products": "Товары",
         "roles": "Роли"
       },
       "rolesComingSoon": "Управление ролями и правами появится позже.",
+      "products": {
+        "title": "Все товары",
+        "loading": "Загружаем товары…",
+        "empty": "Пока нет товаров.",
+        "bySeller": "Продавец: {{name}}"
+      },
       "categories": {
         "title": "Категории",
         "addButton": "Добавить категорию",

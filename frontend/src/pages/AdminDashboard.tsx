@@ -3,9 +3,10 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
 import CategoryManager from '../components/CategoryManager'
 import DashboardLayout from '../components/DashboardLayout'
-import { ShieldIcon, TagIcon } from '../components/DecorativeIcons'
+import { BoxIcon, ShieldIcon, TagIcon } from '../components/DecorativeIcons'
+import ProductManager from '../components/ProductManager'
 
-type Section = 'categories' | 'roles'
+type Section = 'categories' | 'products' | 'roles'
 
 export default function AdminDashboard() {
   const { t } = useTranslation()
@@ -18,6 +19,12 @@ export default function AdminDashboard() {
       label: t('dashboard.admin.nav.categories'),
       icon: <TagIcon className="h-5 w-5" />,
       visible: hasPermission('CATEGORY_MANAGE'),
+    },
+    {
+      id: 'products',
+      label: t('dashboard.admin.nav.products'),
+      icon: <BoxIcon className="h-5 w-5" />,
+      visible: hasPermission('PRODUCT_MANAGE'),
     },
     {
       id: 'roles',
@@ -59,6 +66,7 @@ export default function AdminDashboard() {
 
           <div className="min-w-0 flex-1">
             {activeSection === 'categories' && <CategoryManager />}
+            {activeSection === 'products' && <ProductManager scope="all" />}
             {activeSection === 'roles' && (
               <div className="animate-fade-in-up flex items-center gap-3 rounded-2xl border border-border-subtle bg-surface-raised/80 p-6 shadow-sm backdrop-blur">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-900/40">

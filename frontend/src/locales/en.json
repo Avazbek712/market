@@ -142,9 +142,16 @@
       "manageRoles": "Manage roles",
       "nav": {
         "categories": "Categories",
+        "products": "Products",
         "roles": "Roles"
       },
       "rolesComingSoon": "Role & permission management is coming soon.",
+      "products": {
+        "title": "All products",
+        "loading": "Loading products…",
+        "empty": "No products yet.",
+        "bySeller": "Seller: {{name}}"
+      },
       "categories": {
         "title": "Categories",
         "addButton": "Add category",

@@ -6,10 +6,13 @@ import type { Category } from '../api/categories'
 import { extractErrorMessage } from '../api/errors'
 import * as productsApi from '../api/products'
 import type { Product } from '../api/products'
+import { motion } from 'motion/react'
 import { ChevronLeftIcon, ChevronRightIcon, PencilIcon, PlusIcon, TrashIcon, XIcon } from './ActionIcons'
 import { BoxIcon } from './DecorativeIcons'
 import FormField from './FormField'
 import SubmitButton from './SubmitButton'
+
+const PAGE_SIZE = 20
 
 interface FormState {
   name: string
@@ -69,11 +72,13 @@ function CategorySelect({
   )
 }
 
-export default function ProductManager() {
+export default function ProductManager({ scope = 'mine' }: { scope?: 'mine' | 'all' }) {
   const { t } = useTranslation()
   const [products, setProducts] = useState<Product[] | null>(null)
   const [categories, setCategories] = useState<Category[]>([])
   const [error, setError] = useState<string | null>(null)
+  const [page, setPage] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
 
   const [showAddForm, setShowAddForm] = useState(false)
   const [addForm, setAddForm] = useState<FormState>(EMPTY_FORM)
@@ -93,13 +98,21 @@ export default function ProductManager() {
 
   useEffect(() => {
     void loadProducts()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page])
+
+  useEffect(() => {
     void loadCategories()
   }, [])
 
   async function loadProducts() {
     try {
-      const page = await productsApi.listMyProducts()
-      setProducts(page.content)
+      const result =
+        scope === 'all'
+          ? await productsApi.listProducts({ page, size: PAGE_SIZE })
+          : await productsApi.listMyProducts()
+      setProducts(result.content)
+      setTotalPages(result.totalPages)
     } catch (err) {
       setError(extractErrorMessage(err))
     }
@@ -433,6 +446,11 @@ export default function ProductManager() {
                   {t('dashboard.seller.products.priceAndQty', { price: product.price, count: product.quantity })}
                   {categoryName(product.categoryId) ? ` · ${categoryName(product.categoryId)}` : ''}
                 </p>
+                {scope === 'all' && product.sellerName && (
+                  <p className="truncate text-xs text-content-secondary">
+                    {t('dashboard.admin.products.bySeller', { name: product.sellerName })}
+                  </p>
+                )}
               </div>
             </div>
             <div className="flex shrink-0 gap-1">
@@ -466,16 +484,20 @@ export default function ProductManager() {
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-900/40">
             <BoxIcon className="h-5 w-5" />
           </div>
-          <h2 className="text-lg font-semibold text-content-primary">{t('dashboard.seller.products.title')}</h2>
+          <h2 className="text-lg font-semibold text-content-primary">
+            {t(scope === 'all' ? 'dashboard.admin.products.title' : 'dashboard.seller.products.title')}
+          </h2>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowAddForm((prev) => !prev)}
-          className="flex items-center gap-1.5 rounded-lg bg-brand-500 px-3 py-1.5 text-sm font-medium text-white transition-all hover:bg-brand-600 active:scale-[0.98]"
-        >
-          {showAddForm ? <XIcon className="h-4 w-4" /> : <PlusIcon className="h-4 w-4" />}
-          {t('dashboard.seller.products.addButton')}
-        </button>
+        {scope === 'mine' && (
+          <button
+            type="button"
+            onClick={() => setShowAddForm((prev) => !prev)}
+            className="flex items-center gap-1.5 rounded-lg bg-brand-500 px-3 py-1.5 text-sm font-medium text-white transition-all hover:bg-brand-600 active:scale-[0.98]"
+          >
+            {showAddForm ? <XIcon className="h-4 w-4" /> : <PlusIcon className="h-4 w-4" />}
+            {t('dashboard.seller.products.addButton')}
+          </button>
+        )}
       </div>
 
       {error && (
@@ -484,7 +506,7 @@ export default function ProductManager() {
         </p>
       )}
 
-      {showAddForm && (
+      {scope === 'mine' && showAddForm && (
         <form
           onSubmit={handleAdd}
           className="animate-fade-in-up mb-5 rounded-xl border border-accent-200 bg-accent-50/40 p-4 dark:border-accent-800 dark:bg-accent-900/20"
@@ -556,14 +578,50 @@ export default function ProductManager() {
       )}
 
       {products === null && (
-        <p className="py-6 text-center text-sm text-content-secondary">{t('dashboard.seller.products.loading')}</p>
+        <p className="py-6 text-center text-sm text-content-secondary">
+          {t(scope === 'all' ? 'dashboard.admin.products.loading' : 'dashboard.seller.products.loading')}
+        </p>
       )}
 
       {products !== null && products.length === 0 && (
-        <p className="py-6 text-center text-sm text-content-secondary">{t('dashboard.seller.products.empty')}</p>
+        <p className="py-6 text-center text-sm text-content-secondary">
+          {t(scope === 'all' ? 'dashboard.admin.products.empty' : 'dashboard.seller.products.empty')}
+        </p>
       )}
 
       <ul ref={listRef} className="space-y-2">{products?.map((product, index) => renderRow(product, index))}</ul>
+
+      {scope === 'all' && products !== null && products.length > 0 && totalPages > 1 && (
+        <div className="mt-6 flex items-center justify-center gap-3">
+          <motion.button
+            type="button"
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            disabled={page === 0}
+            aria-label={t('catalog.pagination.prev')}
+            whileHover={page === 0 ? undefined : { scale: 1.08 }}
+            whileTap={page === 0 ? undefined : { scale: 0.92 }}
+            transition={{ duration: 0.15 }}
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-border-strong text-content-secondary transition-colors hover:bg-accent-50 hover:text-accent-600 disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-accent-900/40"
+          >
+            <ChevronLeftIcon className="h-4 w-4" />
+          </motion.button>
+          <span className="text-sm text-content-secondary">
+            {t('catalog.pagination.pageInfo', { current: page + 1, total: totalPages })}
+          </span>
+          <motion.button
+            type="button"
+            onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+            disabled={page >= totalPages - 1}
+            aria-label={t('catalog.pagination.next')}
+            whileHover={page >= totalPages - 1 ? undefined : { scale: 1.08 }}
+            whileTap={page >= totalPages - 1 ? undefined : { scale: 0.92 }}
+            transition={{ duration: 0.15 }}
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-border-strong text-content-secondary transition-colors hover:bg-accent-50 hover:text-accent-600 disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-accent-900/40"
+          >
+            <ChevronRightIcon className="h-4 w-4" />
+          </motion.button>
+        </div>
+      )}
     </div>
   )
 }
