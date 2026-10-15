@@ -34,6 +34,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
+
+    private static final int MAX_IMAGES_PER_PRODUCT = 10;
+
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
     private final UserRepository userRepository;
@@ -87,6 +90,9 @@ public class ProductServiceImpl implements ProductService {
         product.setSeller(seller);
 
         if (images != null) {
+            if (images.size() > MAX_IMAGES_PER_PRODUCT) {
+                throw new IllegalStateException("MAX_IMAGES_EXCEEDED");
+            }
 
             for (int i = 0; i < images.size(); i++) {
                 MultipartFile file = images.get(i);
@@ -144,7 +150,7 @@ public class ProductServiceImpl implements ProductService {
         User user = userRepository
                 .findUserByEmail(authentication.getName()).orElseThrow(() -> new UserNotFoundException("User not found", HttpStatus.NOT_FOUND));
 
-        if (images.size() + product.getImages().size() > 10) {
+        if (images.size() + product.getImages().size() > MAX_IMAGES_PER_PRODUCT) {
             throw new IllegalStateException("MAX_IMAGES_EXCEEDED");
         }
 

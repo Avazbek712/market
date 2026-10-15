@@ -26,6 +26,9 @@ const EMPTY_FORM: FormState = { name: '', description: '', price: '', quantity: 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024
 const MAX_TOTAL_BYTES = 50 * 1024 * 1024
 
+// Mirrors MAX_IMAGES_PER_PRODUCT in ProductServiceImpl — same reasoning as above.
+const MAX_IMAGES_PER_PRODUCT = 10
+
 function imagesExceedLimits(images: File[]) {
   const total = images.reduce((sum, file) => sum + file.size, 0)
   return total > MAX_TOTAL_BYTES || images.some((file) => file.size > MAX_IMAGE_BYTES)
@@ -127,6 +130,10 @@ export default function ProductManager() {
   async function handleAdd(event: FormEvent) {
     event.preventDefault()
     setError(null)
+    if (addImages.length > MAX_IMAGES_PER_PRODUCT) {
+      setError(t('errors.MAX_IMAGES_EXCEEDED'))
+      return
+    }
     if (imagesExceedLimits(addImages)) {
       setError(t('errors.FILE_TOO_LARGE'))
       return
@@ -175,6 +182,11 @@ export default function ProductManager() {
   async function handleAddImages(productId: number, files: File[]) {
     if (files.length === 0) return
     setError(null)
+    const currentCount = products?.find((p) => p.id === productId)?.imageIds.length ?? 0
+    if (currentCount + files.length > MAX_IMAGES_PER_PRODUCT) {
+      setError(t('errors.MAX_IMAGES_EXCEEDED'))
+      return
+    }
     if (imagesExceedLimits(files)) {
       setError(t('errors.FILE_TOO_LARGE'))
       return
@@ -292,8 +304,11 @@ export default function ProductManager() {
             />
 
             <div className="mb-4">
-              <span className="mb-1.5 block text-sm font-medium text-content-secondary">
-                {t('dashboard.seller.products.imagesLabel')}
+              <span className="mb-1.5 flex items-baseline justify-between text-sm font-medium text-content-secondary">
+                <span>{t('dashboard.seller.products.imagesLabel')}</span>
+                <span>
+                  {product.imageIds.length}/{MAX_IMAGES_PER_PRODUCT}
+                </span>
               </span>
               {product.imageIds.length > 0 && (
                 <div className="mb-2 flex flex-wrap gap-2">
@@ -338,7 +353,11 @@ export default function ProductManager() {
               )}
               <label
                 htmlFor={`edit-images-${product.id}`}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border-strong px-3 py-1.5 text-sm font-medium text-content-secondary transition-colors hover:bg-surface-sunken"
+                className={`inline-flex items-center gap-1.5 rounded-lg border border-border-strong px-3 py-1.5 text-sm font-medium text-content-secondary transition-colors ${
+                  product.imageIds.length >= MAX_IMAGES_PER_PRODUCT
+                    ? 'cursor-not-allowed opacity-50'
+                    : 'cursor-pointer hover:bg-surface-sunken'
+                }`}
               >
                 <PlusIcon className="h-3.5 w-3.5" />
                 {t('dashboard.seller.products.addImages')}
@@ -349,7 +368,7 @@ export default function ProductManager() {
                 accept="image/*"
                 multiple
                 className="hidden"
-                disabled={imageActionPendingId === product.id}
+                disabled={imageActionPendingId === product.id || product.imageIds.length >= MAX_IMAGES_PER_PRODUCT}
                 onChange={(e) => {
                   const files = Array.from(e.target.files ?? [])
                   e.target.value = ''
@@ -512,8 +531,14 @@ export default function ProductManager() {
             options={categories}
           />
           <div className="mb-4">
-            <label htmlFor="new-product-images" className="mb-1.5 block text-sm font-medium text-content-secondary">
-              {t('dashboard.seller.products.imagesLabel')}
+            <label
+              htmlFor="new-product-images"
+              className="mb-1.5 flex items-baseline justify-between text-sm font-medium text-content-secondary"
+            >
+              <span>{t('dashboard.seller.products.imagesLabel')}</span>
+              <span className={addImages.length > MAX_IMAGES_PER_PRODUCT ? 'text-danger' : 'text-content-secondary'}>
+                {addImages.length}/{MAX_IMAGES_PER_PRODUCT}
+              </span>
             </label>
             <input
               id="new-product-images"
