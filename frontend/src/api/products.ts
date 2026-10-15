@@ -91,6 +91,25 @@ export async function deleteProduct(id: number): Promise<void> {
   await apiClient.delete(`/products/${id}`)
 }
 
+export async function addProductImages(id: number, images: File[]): Promise<Product> {
+  const formData = new FormData()
+  images.forEach((file) => formData.append('images', file))
+
+  // Same reasoning as createProduct — let the browser set the multipart boundary itself.
+  const { data } = await apiClient.post<Product>(`/products/${id}/images`, formData)
+  return data
+}
+
+export async function removeProductImage(id: number, fileAssetId: number): Promise<Product> {
+  const { data } = await apiClient.delete<Product>(`/products/${id}/images/${fileAssetId}`)
+  return data
+}
+
+export async function reorderProductImages(id: number, fileAssetIdsInOrder: number[]): Promise<Product> {
+  const { data } = await apiClient.patch<Product>(`/products/${id}/images/order`, fileAssetIdsInOrder)
+  return data
+}
+
 export function fileUrl(id: number): string {
   return `/api/files/${id}`
 }

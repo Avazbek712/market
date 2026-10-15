@@ -6,7 +6,7 @@ import type { Category } from '../api/categories'
 import { extractErrorMessage } from '../api/errors'
 import * as productsApi from '../api/products'
 import type { Product } from '../api/products'
-import { PencilIcon, PlusIcon, TrashIcon, XIcon } from './ActionIcons'
+import { ChevronLeftIcon, ChevronRightIcon, PencilIcon, PlusIcon, TrashIcon, XIcon } from './ActionIcons'
 import { BoxIcon } from './DecorativeIcons'
 import FormField from './FormField'
 import SubmitButton from './SubmitButton'
@@ -83,6 +83,8 @@ export default function ProductManager() {
 
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<number | null>(null)
   const [deleteSubmittingId, setDeleteSubmittingId] = useState<number | null>(null)
+
+  const [imageActionPendingId, setImageActionPendingId] = useState<number | null>(null)
 
   const [listRef] = useAutoAnimate()
 
@@ -170,6 +172,56 @@ export default function ProductManager() {
     }
   }
 
+  async function handleAddImages(productId: number, files: File[]) {
+    if (files.length === 0) return
+    setError(null)
+    if (imagesExceedLimits(files)) {
+      setError(t('errors.FILE_TOO_LARGE'))
+      return
+    }
+    setImageActionPendingId(productId)
+    try {
+      const updated = await productsApi.addProductImages(productId, files)
+      setProducts((prev) => prev?.map((p) => (p.id === productId ? updated : p)) ?? null)
+    } catch (err) {
+      setError(extractErrorMessage(err))
+    } finally {
+      setImageActionPendingId(null)
+    }
+  }
+
+  async function handleRemoveImage(productId: number, fileAssetId: number) {
+    setError(null)
+    setImageActionPendingId(productId)
+    try {
+      const updated = await productsApi.removeProductImage(productId, fileAssetId)
+      setProducts((prev) => prev?.map((p) => (p.id === productId ? updated : p)) ?? null)
+    } catch (err) {
+      setError(extractErrorMessage(err))
+    } finally {
+      setImageActionPendingId(null)
+    }
+  }
+
+  async function handleMoveImage(product: Product, index: number, direction: -1 | 1) {
+    const newIndex = index + direction
+    if (newIndex < 0 || newIndex >= product.imageIds.length) return
+    const reordered = [...product.imageIds]
+    const [moved] = reordered.splice(index, 1)
+    reordered.splice(newIndex, 0, moved)
+
+    setError(null)
+    setImageActionPendingId(product.id)
+    try {
+      const updated = await productsApi.reorderProductImages(product.id, reordered)
+      setProducts((prev) => prev?.map((p) => (p.id === product.id ? updated : p)) ?? null)
+    } catch (err) {
+      setError(extractErrorMessage(err))
+    } finally {
+      setImageActionPendingId(null)
+    }
+  }
+
   async function handleDelete(id: number) {
     setError(null)
     setDeleteSubmittingId(id)
@@ -238,6 +290,74 @@ export default function ProductManager() {
               onChange={(value) => setEditForm((prev) => ({ ...prev, categoryId: value }))}
               options={categories}
             />
+
+            <div className="mb-4">
+              <span className="mb-1.5 block text-sm font-medium text-content-secondary">
+                {t('dashboard.seller.products.imagesLabel')}
+              </span>
+              {product.imageIds.length > 0 && (
+                <div className="mb-2 flex flex-wrap gap-2">
+                  {product.imageIds.map((imageId, imgIndex) => (
+                    <div
+                      key={imageId}
+                      className="group relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-border-subtle"
+                    >
+                      <img src={productsApi.fileUrl(imageId)} alt="" className="h-full w-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(product.id, imageId)}
+                        disabled={imageActionPendingId === product.id}
+                        aria-label={t('dashboard.seller.products.removeImage')}
+                        className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-red-600 disabled:opacity-50"
+                      >
+                        <XIcon className="h-3 w-3" />
+                      </button>
+                      <div className="absolute inset-x-0 bottom-0 flex justify-center gap-0.5 bg-black/50 py-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                        <button
+                          type="button"
+                          onClick={() => handleMoveImage(product, imgIndex, -1)}
+                          disabled={imgIndex === 0 || imageActionPendingId === product.id}
+                          aria-label={t('dashboard.seller.products.moveImageLeft')}
+                          className="flex h-4 w-4 items-center justify-center text-white disabled:opacity-30"
+                        >
+                          <ChevronLeftIcon className="h-3 w-3" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleMoveImage(product, imgIndex, 1)}
+                          disabled={imgIndex === product.imageIds.length - 1 || imageActionPendingId === product.id}
+                          aria-label={t('dashboard.seller.products.moveImageRight')}
+                          className="flex h-4 w-4 items-center justify-center text-white disabled:opacity-30"
+                        >
+                          <ChevronRightIcon className="h-3 w-3" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <label
+                htmlFor={`edit-images-${product.id}`}
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border-strong px-3 py-1.5 text-sm font-medium text-content-secondary transition-colors hover:bg-surface-sunken"
+              >
+                <PlusIcon className="h-3.5 w-3.5" />
+                {t('dashboard.seller.products.addImages')}
+              </label>
+              <input
+                id={`edit-images-${product.id}`}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                disabled={imageActionPendingId === product.id}
+                onChange={(e) => {
+                  const files = Array.from(e.target.files ?? [])
+                  e.target.value = ''
+                  void handleAddImages(product.id, files)
+                }}
+              />
+            </div>
+
             <div className="flex gap-2">
               <SubmitButton submitting={editSubmitting}>
                 {editSubmitting ? t('dashboard.seller.products.saving') : t('dashboard.seller.products.save')}
