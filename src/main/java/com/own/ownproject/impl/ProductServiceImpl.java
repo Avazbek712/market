@@ -8,6 +8,7 @@ import com.own.ownproject.exception.UserNotFoundException;
 import com.own.ownproject.mapper.ProductMapper;
 import com.own.ownproject.payload.CreateProductDTO;
 import com.own.ownproject.payload.ProductDTO;
+import com.own.ownproject.payload.UpdateProductDTO;
 import com.own.ownproject.repository.CategoryRepository;
 import com.own.ownproject.repository.ProductRepository;
 import com.own.ownproject.repository.UserRepository;
@@ -15,6 +16,7 @@ import com.own.ownproject.service.FileStorageService;
 import com.own.ownproject.service.ProductService;
 import enums.FileCategory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -26,12 +28,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
@@ -94,18 +98,25 @@ public class ProductServiceImpl implements ProductService {
                 throw new IllegalStateException("MAX_IMAGES_EXCEEDED");
             }
 
-            for (int i = 0; i < images.size(); i++) {
-                MultipartFile file = images.get(i);
-                if (file.isEmpty()) {
-                    continue;
-                }
-                FileAsset fileAsset = fileStorageService.upload(file, seller, FileCategory.PRODUCT_IMAGE);
+            List<String> uploadedKeys = new ArrayList<>();
+            try {
+                for (int i = 0; i < images.size(); i++) {
+                    MultipartFile file = images.get(i);
+                    if (file.isEmpty()) {
+                        continue;
+                    }
+                    FileAsset fileAsset = fileStorageService.upload(file, seller, FileCategory.PRODUCT_IMAGE);
+                    uploadedKeys.add(fileAsset.getStorageKey());
 
-                ProductImage productImage = new ProductImage();
-                productImage.setProduct(product);
-                productImage.setFileAsset(fileAsset);
-                productImage.setSortOrder(i);
-                product.getImages().add(productImage);
+                    ProductImage productImage = new ProductImage();
+                    productImage.setProduct(product);
+                    productImage.setFileAsset(fileAsset);
+                    productImage.setSortOrder(i);
+                    product.getImages().add(productImage);
+                }
+            } catch (RuntimeException e) {
+                cleanupOrphanedFiles(uploadedKeys);
+                throw e;
             }
         }
         productRepository.save(product);
@@ -115,11 +126,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public ProductDTO updateProduct(Long id, CreateProductDTO createProductDTO, Authentication authentication) {
+    public ProductDTO updateProduct(Long id, UpdateProductDTO updateProductDTO, Authentication authentication) {
         Product product = findByIdOrThrow(id);
         assertOwnerOrAdmin(product, authentication);
 
-        applyToEntity(product, createProductDTO);
+        applyPartialUpdate(product, updateProductDTO);
         productRepository.save(product);
         return productMapper.toProductDTO(product);
     }
@@ -135,7 +146,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
-    public ProductDTO getProductById(Long id, Authentication authentication) {
+    public ProductDTO getProductById(Long id) {
         return productMapper.toProductDTO(findByIdOrThrow(id));
     }
 
@@ -159,17 +170,24 @@ public class ProductServiceImpl implements ProductService {
                 .max()
                 .orElse(-1) + 1;
 
-        for (int i = 0; i < images.size(); i++) {
-            MultipartFile file = images.get(i);
-            if (file.isEmpty()) continue;
-            FileAsset fileAsset = fileStorageService.upload(file, user, FileCategory.PRODUCT_IMAGE);
+        List<String> uploadedKeys = new ArrayList<>();
+        try {
+            for (int i = 0; i < images.size(); i++) {
+                MultipartFile file = images.get(i);
+                if (file.isEmpty()) continue;
+                FileAsset fileAsset = fileStorageService.upload(file, user, FileCategory.PRODUCT_IMAGE);
+                uploadedKeys.add(fileAsset.getStorageKey());
 
-            ProductImage productImage = new ProductImage();
-            productImage.setProduct(product);
-            productImage.setFileAsset(fileAsset);
-            productImage.setSortOrder(nextSortOrder + i);
+                ProductImage productImage = new ProductImage();
+                productImage.setProduct(product);
+                productImage.setFileAsset(fileAsset);
+                productImage.setSortOrder(nextSortOrder + i);
 
-            product.getImages().add(productImage);
+                product.getImages().add(productImage);
+            }
+        } catch (RuntimeException e) {
+            cleanupOrphanedFiles(uploadedKeys);
+            throw e;
         }
         productRepository.save(product);
 
@@ -235,6 +253,44 @@ public class ProductServiceImpl implements ProductService {
         Category category = categoryRepository.findById(dto.getCategoryId())
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found", HttpStatus.BAD_REQUEST));
         product.setCategory(category);
+    }
+
+    private void applyPartialUpdate(Product product, UpdateProductDTO dto) {
+        if (dto.getName() != null) {
+            product.setName(dto.getName());
+        }
+        if (dto.getDescription() != null) {
+            product.setDescription(dto.getDescription());
+        }
+        if (dto.getPrice() != null) {
+            product.setPrice(dto.getPrice());
+        }
+        if (dto.getQuantity() != null) {
+            product.setQuantity(dto.getQuantity());
+        }
+
+        if (dto.getCategoryId() == null) {
+            product.setCategory(null);
+            return;
+        }
+        Category category = categoryRepository.findById(dto.getCategoryId())
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found", HttpStatus.BAD_REQUEST));
+        product.setCategory(category);
+    }
+
+    // Best-effort compensation for the MinIO/DB inconsistency: the DB side of a
+    // failed upload rolls back with the surrounding @Transactional, but a file
+    // already PUT to MinIO is a real external side effect that doesn't. One
+    // cleanup failure must not hide the original upload error, so each delete is
+    // isolated and only logged.
+    private void cleanupOrphanedFiles(List<String> storageKeys) {
+        for (String storageKey : storageKeys) {
+            try {
+                fileStorageService.delete(storageKey);
+            } catch (Exception cleanupException) {
+                log.error("Failed to clean up orphaned file after a failed upload: {}", storageKey, cleanupException);
+            }
+        }
     }
 
     private Product findByIdOrThrow(Long id) {

@@ -2,6 +2,7 @@ package com.own.ownproject.service;
 
 import com.own.ownproject.payload.CreateProductDTO;
 import com.own.ownproject.payload.ProductDTO;
+import com.own.ownproject.payload.UpdateProductDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -18,11 +19,11 @@ public interface ProductService {
 
     ProductDTO createProduct(CreateProductDTO createProductDTO, List<MultipartFile> images, Authentication authentication);
 
-    ProductDTO updateProduct(Long id, CreateProductDTO createProductDTO, Authentication authentication);
+    ProductDTO updateProduct(Long id, UpdateProductDTO updateProductDTO, Authentication authentication);
 
     void deleteProduct(Long id, Authentication authentication);
 
-    ProductDTO getProductById(Long id, Authentication authentication);
+    ProductDTO getProductById(Long id);
 
     ProductDTO addImages(Long productId, List<MultipartFile> images, Authentication authentication);
 

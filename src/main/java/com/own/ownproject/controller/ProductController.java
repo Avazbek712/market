@@ -2,6 +2,7 @@ package com.own.ownproject.controller;
 
 import com.own.ownproject.payload.CreateProductDTO;
 import com.own.ownproject.payload.ProductDTO;
+import com.own.ownproject.payload.UpdateProductDTO;
 import com.own.ownproject.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,8 +43,8 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getOne(@PathVariable Long id, Authentication authentication) {
-        return ResponseEntity.ok(productService.getProductById(id, authentication));
+    public ResponseEntity<ProductDTO> getOne(@PathVariable Long id) {
+        return ResponseEntity.ok(productService.getProductById(id));
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -58,7 +59,7 @@ public class ProductController {
     @PatchMapping("/{id}")
     @PreAuthorize("hasAuthority('PRODUCT_MANAGE')")
     public ResponseEntity<ProductDTO> update(@PathVariable Long id,
-                                             @Valid @RequestBody CreateProductDTO dto,
+                                             @Valid @RequestBody UpdateProductDTO dto,
                                              Authentication authentication) {
         return ResponseEntity.ok(productService.updateProduct(id, dto, authentication));
     }
