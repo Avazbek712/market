@@ -55,7 +55,12 @@ FROM (VALUES ('Смартфоны', 'Электроника'),
              ('Корм для животных', 'Зоотовары'),
              ('Аксессуары для животных', 'Зоотовары')
      ) AS sub (name, parent_name)
-         JOIN categories parent ON parent.name = sub.parent_name AND parent.parent_id IS NULL;
+         -- Must also filter by active=true: on an environment with pre-existing
+         -- (even soft-deleted) categories sharing a name with one of ours, the
+         -- join would match every same-named row and insert each subcategory
+         -- once per match, immediately tripping the unique index. Caught on
+         -- production, which had old test categories including an "Электроника".
+         JOIN categories parent ON parent.name = sub.parent_name AND parent.parent_id IS NULL AND parent.active = true;
 
 --rollback DELETE FROM categories WHERE parent_id IS NOT NULL;
 --rollback DELETE FROM categories WHERE name IN ('Электроника', 'Одежда и обувь', 'Дом и сад', 'Красота и здоровье', 'Детские товары', 'Спорт и отдых', 'Автотовары', 'Книги и хобби', 'Зоотовары');
