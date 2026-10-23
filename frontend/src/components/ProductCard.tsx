@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import * as productsApi from '../api/products'
 import type { Product } from '../api/products'
 import { BoxIcon } from './DecorativeIcons'
+import FavoriteButton from './FavoriteButton'
 
 export default function ProductCard({ product, categoryName }: { product: Product; categoryName?: string }) {
   const { t } = useTranslation()
@@ -21,7 +22,8 @@ export default function ProductCard({ product, categoryName }: { product: Produc
         to={`/products/${product.id}`}
         className="flex h-full flex-col overflow-hidden rounded-2xl border border-border-subtle bg-surface-raised/80 shadow-sm backdrop-blur transition-shadow hover:shadow-lg hover:shadow-accent-500/10"
       >
-        <div className="aspect-square w-full overflow-hidden bg-accent-50 dark:bg-accent-900/30">
+        <div className="relative aspect-square w-full overflow-hidden bg-accent-50 dark:bg-accent-900/30">
+          <FavoriteButton productId={product.id} className="absolute right-2 top-2 z-10" />
           {product.imageIds.length > 0 ? (
             <motion.img
               src={productsApi.fileUrl(product.imageIds[0])}

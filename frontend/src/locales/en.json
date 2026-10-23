@@ -69,6 +69,10 @@
     "MAX_IMAGES_EXCEEDED": "A product can have up to 10 photos.",
     "GENERIC": "Something went wrong, please try again."
   },
+  "favorites": {
+    "add": "Add to favorites",
+    "remove": "Remove from favorites"
+  },
   "catalog": {
     "title": "Browse products",
     "subtitle": "Everything currently listed on MiniMarket.",
@@ -106,7 +110,12 @@
   "dashboard": {
     "buyer": {
       "title": "Buyer dashboard",
-      "subtitle": "Your orders and purchases will show up here."
+      "subtitle": "Your orders and purchases will show up here.",
+      "favorites": {
+        "title": "Favorites",
+        "loading": "Loading favorites…",
+        "empty": "No favorites yet — tap the heart on a product to save it here."
+      }
     },
     "seller": {
       "title": "Seller dashboard",

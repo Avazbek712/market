@@ -9,6 +9,7 @@ import * as productsApi from '../api/products'
 import type { Product } from '../api/products'
 import { ChevronLeftIcon } from '../components/ActionIcons'
 import { BoxIcon } from '../components/DecorativeIcons'
+import FavoriteButton from '../components/FavoriteButton'
 import PublicLayout from '../components/PublicLayout'
 import Spinner from '../components/Spinner'
 
@@ -115,7 +116,10 @@ export default function ProductDetailPage() {
             </div>
 
             <div>
-              <h1 className="text-2xl font-semibold text-content-primary">{product.name}</h1>
+              <div className="flex items-start justify-between gap-3">
+                <h1 className="text-2xl font-semibold text-content-primary">{product.name}</h1>
+                <FavoriteButton productId={product.id} className="shrink-0" />
+              </div>
               {categoryName && <p className="mt-1 text-sm text-content-secondary">{categoryName}</p>}
               <p className="mt-4 text-3xl font-semibold text-brand-600 dark:text-brand-400">
                 {t('catalog.priceValue', { price: product.price })}
