@@ -75,3 +75,20 @@ export function MoonIcon(props: IconProps) {
     </svg>
   )
 }
+
+export function HeartIcon({ filled, ...props }: IconProps & { filled?: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill={filled ? 'currentColor' : 'none'}
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M12 20.5s-7.5-4.6-9.8-9.1C.6 7.8 2.4 4.5 5.8 3.8c2-.4 3.9.5 5 2.1l1.2 1.7 1.2-1.7c1.1-1.6 3-2.5 5-2.1 3.4.7 5.2 4 3.6 7.6-2.3 4.5-9.8 9.1-9.8 9.1Z" />
+    </svg>
+  )
+}
