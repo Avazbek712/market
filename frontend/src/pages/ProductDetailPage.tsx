@@ -7,6 +7,7 @@ import type { Category } from '../api/categories'
 import { extractErrorMessage } from '../api/errors'
 import * as productsApi from '../api/products'
 import type { Product } from '../api/products'
+import AddToCartButton from '../components/AddToCartButton'
 import { ChevronLeftIcon } from '../components/ActionIcons'
 import { BoxIcon } from '../components/DecorativeIcons'
 import FavoriteButton from '../components/FavoriteButton'
@@ -130,6 +131,15 @@ export default function ProductDetailPage() {
                   ? t('productDetail.inStock', { count: product.quantity })
                   : t('productDetail.outOfStock')}
               </p>
+
+              {product.quantity > 0 && (
+                <AddToCartButton
+                  productId={product.id}
+                  imageUrl={product.imageIds.length > 0 ? productsApi.fileUrl(product.imageIds[0]) : undefined}
+                  variant="full"
+                  className="mt-4"
+                />
+              )}
 
               {product.description && (
                 <p className="mt-6 whitespace-pre-line text-content-primary">{product.description}</p>

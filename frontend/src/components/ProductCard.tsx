@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import * as productsApi from '../api/products'
 import type { Product } from '../api/products'
+import AddToCartButton from './AddToCartButton'
 import { BoxIcon } from './DecorativeIcons'
 import FavoriteButton from './FavoriteButton'
 
@@ -41,9 +42,15 @@ export default function ProductCard({ product, categoryName }: { product: Produc
         <div className="flex flex-1 flex-col gap-1 p-4">
           <p className="line-clamp-2 font-medium text-content-primary">{product.name}</p>
           {categoryName && <p className="text-xs text-content-secondary">{categoryName}</p>}
-          <p className="mt-auto pt-2 text-lg font-semibold text-brand-600 dark:text-brand-400">
-            {t('catalog.priceValue', { price: product.price })}
-          </p>
+          <div className="mt-auto flex items-center justify-between gap-2 pt-2">
+            <p className="text-lg font-semibold text-brand-600 dark:text-brand-400">
+              {t('catalog.priceValue', { price: product.price })}
+            </p>
+            <AddToCartButton
+              productId={product.id}
+              imageUrl={product.imageIds.length > 0 ? productsApi.fileUrl(product.imageIds[0]) : undefined}
+            />
+          </div>
         </div>
       </Link>
     </motion.div>

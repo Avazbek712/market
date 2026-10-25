@@ -37,7 +37,6 @@ public class FavoriteServiceImpl implements FavoriteService {
     public void addFavorite(Long productId, Authentication authentication) {
         User user = currentUser(authentication);
 
-        // Idempotent: clicking an already-favorited heart is a no-op, not an error.
         if (favoriteRepository.findByUserIdAndProductId(user.getId(), productId).isPresent()) {
             return;
         }
@@ -68,11 +67,6 @@ public class FavoriteServiceImpl implements FavoriteService {
 
         Page<Favorite> favorites = favoriteRepository.findAllByUserId(user.getId(), pageable);
 
-        // A favorited product may have been soft-deleted since — getProduct() then
-        // returns null (see @NotFound on Favorite.product) instead of blowing up.
-        // Keep the original totalElements so pagination math stays based on the
-        // actual number of favorites, even if this particular page renders fewer
-        // cards because some of its products are gone.
         List<ProductDTO> productDTOs = favorites.getContent().stream()
                 .map(Favorite::getProduct)
                 .filter(Objects::nonNull)
