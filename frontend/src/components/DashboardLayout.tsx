@@ -2,6 +2,7 @@ import { motion } from 'motion/react'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
+import CartIconButton from './CartIconButton'
 import LanguageSwitcher from './LanguageSwitcher'
 import Logo from './Logo'
 import ThemeToggle from './ThemeToggle'
@@ -23,6 +24,7 @@ export default function DashboardLayout({ children, wide = false }: { children: 
         <div className="flex items-center gap-4">
           <ThemeToggle />
           <LanguageSwitcher />
+          <CartIconButton />
           {me && <span className="hidden text-sm text-content-secondary sm:inline">{me.fullName || me.email}</span>}
           <motion.button
             type="button"

@@ -73,6 +73,14 @@
     "add": "Add to favorites",
     "remove": "Remove from favorites"
   },
+  "cart": {
+    "title": "Cart",
+    "add": "Add to cart",
+    "remove": "Remove",
+    "total": "Total",
+    "empty": "Your cart is empty.",
+    "loading": "Loading cart…"
+  },
   "catalog": {
     "title": "Browse products",
     "subtitle": "Everything currently listed on MiniMarket.",

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
 import { DASHBOARD_PATH } from '../auth/roles'
+import CartIconButton from './CartIconButton'
 import LanguageSwitcher from './LanguageSwitcher'
 import Logo from './Logo'
 import ThemeToggle from './ThemeToggle'
@@ -54,6 +55,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
         <div className="flex items-center gap-4">
           <ThemeToggle />
           <LanguageSwitcher />
+          <CartIconButton />
           {status === 'authenticated' && me ? (
             <>
               <span className="hidden text-sm text-content-secondary sm:inline">{me.fullName || me.email}</span>
