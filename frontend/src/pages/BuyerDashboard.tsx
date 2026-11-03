@@ -3,7 +3,10 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as categoriesApi from '../api/categories'
 import type { Category } from '../api/categories'
+import { extractErrorMessage } from '../api/errors'
 import * as favoritesApi from '../api/favorites'
+import * as ordersApi from '../api/orders'
+import type { Order } from '../api/orders'
 import * as productsApi from '../api/products'
 import type { Product } from '../api/products'
 import { ChevronLeftIcon, ChevronRightIcon, HeartIcon, MinusIcon, PlusIcon, TrashIcon } from '../components/ActionIcons'
@@ -13,15 +16,29 @@ import { BoxIcon, ShoppingBagIcon } from '../components/DecorativeIcons'
 import ProductGrid from '../components/ProductGrid'
 
 const PAGE_SIZE = 12
+const ORDERS_PAGE_SIZE = 5
+
+const ITEM_STATUS_STYLES: Record<Order['items'][number]['status'], string> = {
+  PENDING: 'bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300',
+  SHIPPED: 'bg-accent-50 text-accent-600 dark:bg-accent-900/40 dark:text-accent-300',
+  DELIVERED: 'bg-success/10 text-success',
+  CANCELLED: 'bg-danger/10 text-danger',
+}
 
 export default function BuyerDashboard() {
-  const { t } = useTranslation()
-  const { cart, updateQuantity, removeFromCart, pendingProductIds } = useCart()
+  const { t, i18n } = useTranslation()
+  const { cart, updateQuantity, removeFromCart, pendingProductIds, refreshCart } = useCart()
   const [categories, setCategories] = useState<Category[]>([])
   const [products, setProducts] = useState<Product[]>([])
   const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [orders, setOrders] = useState<Order[]>([])
+  const [ordersPage, setOrdersPage] = useState(0)
+  const [ordersTotalPages, setOrdersTotalPages] = useState(0)
+  const [ordersLoading, setOrdersLoading] = useState(true)
+  const [checkingOut, setCheckingOut] = useState(false)
+  const [checkoutError, setCheckoutError] = useState<string | null>(null)
 
   useEffect(() => {
     categoriesApi
@@ -47,6 +64,38 @@ export default function BuyerDashboard() {
       cancelled = true
     }
   }, [page])
+
+  function loadOrders(targetPage: number) {
+    setOrdersLoading(true)
+    return ordersApi
+      .listMyOrders(targetPage, ORDERS_PAGE_SIZE)
+      .then((result) => {
+        setOrders(result.content)
+        setOrdersTotalPages(result.totalPages)
+      })
+      .catch(() => undefined)
+      .finally(() => setOrdersLoading(false))
+  }
+
+  useEffect(() => {
+    void loadOrders(ordersPage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ordersPage])
+
+  async function handleCheckout() {
+    setCheckingOut(true)
+    setCheckoutError(null)
+    try {
+      await ordersApi.checkout()
+      await refreshCart()
+      setOrdersPage(0)
+      await loadOrders(0)
+    } catch (err) {
+      setCheckoutError(extractErrorMessage(err))
+    } finally {
+      setCheckingOut(false)
+    }
+  }
 
   return (
     <DashboardLayout>
@@ -158,6 +207,124 @@ export default function BuyerDashboard() {
                 {t('catalog.priceValue', { price: cart.total })}
               </span>
             </div>
+
+            {checkoutError && (
+              <p key={checkoutError} role="alert" className="animate-shake mt-3 text-sm text-danger">
+                {checkoutError}
+              </p>
+            )}
+
+            <motion.button
+              type="button"
+              onClick={() => void handleCheckout()}
+              disabled={checkingOut}
+              whileHover={checkingOut ? undefined : { scale: 1.015 }}
+              whileTap={checkingOut ? undefined : { scale: 0.985 }}
+              transition={{ duration: 0.15 }}
+              className="mt-3 flex w-full items-center justify-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-brand-600 disabled:opacity-60"
+            >
+              {checkingOut ? t('cart.checkingOut') : t('cart.checkout')}
+            </motion.button>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-8">
+        <div className="mb-4 flex items-center gap-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-900/40">
+            <BoxIcon className="h-5 w-5" />
+          </div>
+          <h2 className="text-lg font-semibold text-content-primary">{t('orders.title')}</h2>
+        </div>
+
+        {ordersLoading && orders.length === 0 ? (
+          <p className="py-6 text-center text-sm text-content-secondary">{t('orders.loading')}</p>
+        ) : orders.length === 0 ? (
+          <p className="py-6 text-center text-sm text-content-secondary">{t('orders.empty')}</p>
+        ) : (
+          <div className="space-y-4">
+            <AnimatePresence initial={false}>
+              {orders.map((order) => (
+                <motion.div
+                  key={order.id}
+                  layout
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="rounded-2xl border border-border-subtle bg-surface-raised/80 p-4 shadow-sm backdrop-blur"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border-subtle pb-3">
+                    <div className="flex items-center gap-3">
+                      <span className="font-medium text-content-primary">{t('orders.orderNumber', { id: order.id })}</span>
+                      <span className="text-sm text-content-secondary">
+                        {new Date(order.createdAt).toLocaleString(i18n.language, { dateStyle: 'medium', timeStyle: 'short' })}
+                      </span>
+                    </div>
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+                        order.paymentStatus === 'PAID'
+                          ? 'bg-success/10 text-success'
+                          : 'bg-warning/10 text-warning'
+                      }`}
+                    >
+                      {t(`orders.paymentStatus.${order.paymentStatus}`)}
+                    </span>
+                  </div>
+                  <ul className="divide-y divide-border-subtle">
+                    {order.items.map((item, index) => (
+                      <li key={index} className="flex items-center gap-3 py-2.5">
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate font-medium text-content-primary">{item.productName}</p>
+                          <p className="text-sm text-content-secondary">
+                            {t('catalog.priceValue', { price: item.price })} × {item.quantity}
+                          </p>
+                        </div>
+                        <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${ITEM_STATUS_STYLES[item.status]}`}>
+                          {t(`orders.itemStatus.${item.status}`)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="flex items-center justify-between border-t border-border-subtle pt-3">
+                    <span className="font-medium text-content-primary">{t('orders.total')}</span>
+                    <span className="text-lg font-semibold text-brand-600 dark:text-brand-400">
+                      {t('catalog.priceValue', { price: order.total })}
+                    </span>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+
+            {ordersTotalPages > 1 && (
+              <div className="flex items-center justify-center gap-3">
+                <motion.button
+                  type="button"
+                  onClick={() => setOrdersPage((p) => Math.max(0, p - 1))}
+                  disabled={ordersPage === 0}
+                  aria-label={t('catalog.pagination.prev')}
+                  whileHover={ordersPage === 0 ? undefined : { scale: 1.08 }}
+                  whileTap={ordersPage === 0 ? undefined : { scale: 0.92 }}
+                  transition={{ duration: 0.15 }}
+                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-border-strong text-content-secondary transition-colors hover:bg-accent-50 hover:text-accent-600 disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-accent-900/40"
+                >
+                  <ChevronLeftIcon className="h-4 w-4" />
+                </motion.button>
+                <span className="text-sm text-content-secondary">
+                  {t('catalog.pagination.pageInfo', { current: ordersPage + 1, total: ordersTotalPages })}
+                </span>
+                <motion.button
+                  type="button"
+                  onClick={() => setOrdersPage((p) => Math.min(ordersTotalPages - 1, p + 1))}
+                  disabled={ordersPage >= ordersTotalPages - 1}
+                  aria-label={t('catalog.pagination.next')}
+                  whileHover={ordersPage >= ordersTotalPages - 1 ? undefined : { scale: 1.08 }}
+                  whileTap={ordersPage >= ordersTotalPages - 1 ? undefined : { scale: 0.92 }}
+                  transition={{ duration: 0.15 }}
+                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-border-strong text-content-secondary transition-colors hover:bg-accent-50 hover:text-accent-600 disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-accent-900/40"
+                >
+                  <ChevronRightIcon className="h-4 w-4" />
+                </motion.button>
+              </div>
+            )}
           </div>
         )}
       </div>
