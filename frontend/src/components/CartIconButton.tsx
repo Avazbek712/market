@@ -22,9 +22,9 @@ export default function CartIconButton() {
       <Link
         to="/buyer"
         aria-label={t('cart.title')}
-        className="flex h-9 w-9 items-center justify-center rounded-lg border border-border-strong text-content-secondary transition-colors hover:border-accent-300 hover:bg-accent-50 hover:text-accent-600 dark:hover:bg-accent-900/40"
+        className="flex h-11 w-11 items-center justify-center rounded-lg border border-border-strong text-content-secondary transition-colors hover:border-accent-300 hover:bg-accent-50 hover:text-accent-600 dark:hover:bg-accent-900/40"
       >
-        <ShoppingBagIcon className="h-4 w-4" />
+        <ShoppingBagIcon className="h-5 w-5" />
       </Link>
       <AnimatePresence>
         {itemCount > 0 && (
@@ -34,7 +34,7 @@ export default function CartIconButton() {
             animate={{ scale: 1 }}
             exit={{ scale: 0 }}
             transition={{ duration: 0.2, type: 'spring', stiffness: 400, damping: 20 }}
-            className="pointer-events-none absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-500 px-1 text-[10px] font-semibold text-white"
+            className="pointer-events-none absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-500 px-1 text-[10px] font-semibold text-white"
           >
             {itemCount}
           </motion.span>

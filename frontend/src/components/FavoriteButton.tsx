@@ -74,20 +74,20 @@ export default function FavoriteButton({ productId, className = '' }: { productI
         void toggleFavorite(productId)
       }}
       disabled={pending}
-      whileHover={{ scale: 1.12 }}
-      whileTap={{ scale: 0.88 }}
-      transition={{ duration: 0.15 }}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
       aria-label={favorited ? t('favorites.remove') : t('favorites.add')}
       aria-pressed={favorited}
-      className={`flex h-8 w-8 items-center justify-center rounded-full bg-surface-raised/90 shadow-sm backdrop-blur transition-colors disabled:opacity-60 ${
+      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent-50 shadow-sm transition-colors hover:bg-accent-100 disabled:opacity-60 dark:bg-accent-900/40 dark:hover:bg-accent-900/60 ${
         favorited ? 'text-brand-500' : 'text-content-secondary hover:text-brand-500'
       } ${className}`}
     >
-      <span className="relative block h-4 w-4">
+      <span className="relative block h-5 w-5">
         <AnimatePresence initial={false}>
           {favorited ? (
             <span key="filled" className="absolute inset-0">
-              <SplitHeart className="h-4 w-4" />
+              <SplitHeart className="h-5 w-5" />
             </span>
           ) : (
             <motion.span
@@ -97,7 +97,7 @@ export default function FavoriteButton({ productId, className = '' }: { productI
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.2 }}
             >
-              <HeartIcon className="h-4 w-4" />
+              <HeartIcon className="h-5 w-5" />
             </motion.span>
           )}
         </AnimatePresence>

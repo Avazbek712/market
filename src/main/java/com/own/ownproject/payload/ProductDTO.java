@@ -30,4 +30,12 @@ public class ProductDTO {
 
     private List<Long> imageIds;
 
+    // Only populated by getProducts/getProductById (catalog + detail page) —
+    // batched per request to avoid an N+1 count query per product, see
+    // ProductServiceImpl.enrichWithCounts. Null elsewhere (e.g. getMyProducts),
+    // since the seller dashboard doesn't display them.
+    private Long favoritesCount;
+
+    private Long ordersCount;
+
 }

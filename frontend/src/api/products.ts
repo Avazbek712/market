@@ -10,6 +10,10 @@ export interface Product {
   sellerId: number
   sellerName: string | null
   imageIds: number[]
+  // Only populated by listProducts/getProduct (catalog + detail page) — null
+  // from listMyProducts (seller dashboard), which doesn't display them.
+  favoritesCount: number | null
+  ordersCount: number | null
 }
 
 export interface ProductPayload {
