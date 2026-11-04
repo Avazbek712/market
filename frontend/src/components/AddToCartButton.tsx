@@ -46,28 +46,32 @@ export default function AddToCartButton({
         disabled={pending}
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.96 }}
-        transition={{ duration: 0.15 }}
-        className={`flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-brand-600 disabled:opacity-60 ${className}`}
+        transition={{ duration: 0.2, ease: 'easeOut' }}
+        className={`flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-600 disabled:opacity-60 ${className}`}
       >
-        <ShoppingBagIcon className="h-4 w-4" />
+        <ShoppingBagIcon className="h-5 w-5" />
         {t('cart.add')}
       </motion.button>
     )
   }
 
+  // Plus + bag together read as "add to cart" at a glance, and the bag icon
+  // matches CartIconButton's header icon exactly — same component, same size —
+  // so the cart affordance looks identical everywhere it appears.
   return (
     <motion.button
       ref={buttonRef}
       type="button"
       onClick={handleClick}
       disabled={pending}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-      transition={{ duration: 0.15 }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.93 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
       aria-label={t('cart.add')}
-      className={`flex h-8 w-8 items-center justify-center rounded-full bg-brand-500 text-white shadow-sm transition-colors hover:bg-brand-600 disabled:opacity-60 ${className}`}
+      className={`flex h-11 items-center justify-center gap-1.5 rounded-full bg-brand-500 px-4 text-white shadow-sm transition-colors hover:bg-brand-600 disabled:opacity-60 ${className}`}
     >
-      <PlusIcon className="h-4 w-4" />
+      <PlusIcon className="h-5 w-5" />
+      <ShoppingBagIcon className="h-5 w-5" />
     </motion.button>
   )
 }

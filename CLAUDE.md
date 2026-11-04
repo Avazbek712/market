@@ -1,6 +1,6 @@
 # MiniMarket — контекст проекта для Claude Code
 
-Этот файл читается автоматически в начале каждой сессии Claude Code в этом репозитории, на любом устройстве. Собран из двух источников: технический снимок стека/структуры (от одной сессии) + раздел про стиль совместной работы и историю (от другой), сведены воедино и сверены с реальным кодом на 06.10.2026.
+Этот файл читается автоматически в начале каждой сессии Claude Code в этом репозитории, на любом устройстве. Собран из двух источников: технический снимок стека/структуры (от одной сессии) + раздел про стиль совместной работы и историю (от другой), сведены воедино и сверены с реальным кодом на 06.10.2026, затем дополнен по итогам сессии от 16.10.2026 (Product-модуль: управление картинками + редизайн фронтенда).
 
 **Перед тем как что-либо менять — сверь ключевые факты (структуру пакетов, SecurityConfig, entity-поля) с реальными файлами в репозитории.** Уже был случай, когда пересказ разошёлся с действительностью — не доверяй этому файлу слепо, особенно если с момента последней правки прошло много времени или сессий.
 
@@ -19,7 +19,9 @@
 
 **Frontend — Claude владеет реализацией напрямую:**
 - В отличие от backend, здесь не строгий review-cycle — пользователь даёт промпт/дизайн-задачу, Claude пишет код сам.
-- Стиль уже устоялся: см. `CategoryManager.tsx`/`ProductManager.tsx` как образец компонента, `api/*.ts` как образец API-слоя, `CatalogPage`/`ProductCard`/`ProductGrid` как образец публичных страниц с `framer-motion`. Новые фичи должны соответствовать этому стилю.
+- Стиль уже устоялся: см. `CategoryManager.tsx`/`ProductManager.tsx` как образец компонента, `api/*.ts` как образец API-слоя, `CatalogPage`/`ProductCard`/`ProductGrid` как образец публичных страниц с `motion` (пакет-преемник `framer-motion`, см. «Стек»). Новые фичи должны соответствовать этому стилю.
+- **Уточнение от 12–16.10.2026**: «Claude владеет реализацией» не означает «сразу мержить». Для крупных визуальных правок (редизайн, тёмная тема) пользователь явно попросил работать маленькими шагами в отдельных ветках/PR и **не мержить самостоятельно**, даже без явного «не трогай git» — он смотрит глазами и мержит сам, когда готов. Если неясно, мержить ли — не мержить, спросить. Для крупной задачи (например, «сделаем тёмную тему») — Claude выбирает конкретные решения сам (не спрашивая на каждом шаге), но каждый логический кусок — отдельный коммит/ветка от актуального `main`, с рабочим `tsc -b`/`vite build`/`oxlint` перед коммитом.
+- У Claude в этой среде нет браузерного рендера — визуальная проверка (как выглядит, не ломается ли что-то при реальном взаимодействии) целиком на пользователе. Claude честно говорит об этом вместо того, чтобы заявлять «готово» без проверки. Пробовали подключить расширение Claude for Chrome к самой Claude Code CLI-сессии — штатно не работает в уже запущенной сессии, нужен отдельный процесс с флагом `claude --chrome` (или `claude --resume <id> --chrome` после `claude stop <id>` для уже работающей фоновой сессии) — пользователь в итоге решил не возиться с этим.
 
 **Git и сервер — не трогать без явной просьбы:**
 - Пользователь коммитит и пушит сам. Не делать `git commit`/`git push` самостоятельно без явной просьбы — но если прямо просят (например, смержить из main) — делать аккуратно: сверить расхождение (`git log A..B`), не затирать незакоммиченное молча (если есть конфликт с untracked-файлом — сначала показать пользователю, не перезаписывать).
@@ -39,7 +41,8 @@
 - Spring Security + JJWT 0.13.0 — permission-based авторизация
 - MapStruct 1.6.3 + lombok-mapstruct-binding 0.2.0 (порядок annotation processor'ов в maven-compiler-plugin: mapstruct-processor, lombok, lombok-mapstruct-binding)
 - Lombok — НЕ используется `@Data` на JPA-сущностях (риск equals/hashCode по коллекциям в `@ManyToMany`), только `@Getter`/`@Setter` вручную
-- Frontend (`frontend/`, отдельная папка рядом с Maven-модулем): React 19 + TypeScript + Vite, Tailwind 4 (через `@tailwindcss/vite`), react-router-dom 7, react-i18next (локали `en`/`ru`), axios, framer-motion
+- Frontend (`frontend/`, отдельная папка рядом с Maven-модулем): React 19 + TypeScript + Vite, Tailwind 4 (через `@tailwindcss/vite`), react-router-dom 7, react-i18next (локали `en`/`ru`), axios
+- Анимации/UX-библиотеки фронтенда: `motion` (пакет-преемник `framer-motion`, мигрировали с него 15.10.2026 — импорт `from 'motion/react'`, не `framer-motion`), `lenis` (плавный скролл, подключён в `PublicLayout`, лениво импортируется и выключен при `prefers-reduced-motion`), `@formkit/auto-animate` (хук `useAutoAnimate` — анимация добавления/удаления строк в списках `CategoryManager`/`ProductManager`)
 
 ## Структура пакета com.own.ownproject
 
@@ -53,7 +56,8 @@ entity/           AbsEntity (@MappedSuperclass), User, Role, Permission,
                   Category, Product, ProductImage, FileAsset
 exception/        CategoryNotFoundException, EmailAlreadyExistsException,
                   FileStorageException, InvalidRoleException,
-                  ProductNotFoundException, UserNotFoundException
+                  ProductNotFoundException, ProductImageNotFoundException,
+                  UserNotFoundException
 handler/          GlobalExceptionHandler (@RestControllerAdvice)
 impl/             CategoryServiceImpl, FileStorageServiceImpl,
                   ProductServiceImpl, UserServiceImpl
@@ -62,7 +66,7 @@ payload/          CategoryDTO, CreateCategoryDTO, CreateProductDTO, ErrorDTO,
                   FieldErrorDTO, LoginDTO, ProductDTO, RegisterDTO, TokenDTO,
                   UserMeDTO
 repository/       CategoryRepository, FileAssetRepository, ProductRepository,
-                  RoleRepository, UserRepository
+                  ProductImageRepository, RoleRepository, UserRepository
 service/          CategoryService, FileStorageService, ProductService,
                   UserService
 ```
@@ -74,7 +78,7 @@ service/          CategoryService, FileStorageService, ProductService,
 - **Role**: id, name, description, permissions (`@ManyToMany`→Permission, через `role_permissions`)
 - **Permission**: id, code (unique), description
 - **Category**: id, name (unique), description, parent (`@ManyToOne`→Category, self-reference — вложенность до 2 уровней, осознанное расширение сверх исходного плоского ТЗ)
-- **Product**: id, name, description, price (BigDecimal), quantity, category (`@ManyToOne`), seller (`@ManyToOne`→User), images (`@OneToMany`→ProductImage, с `sortOrder` — галерея, не одна картинка). Остатки (`quantity`) — прямое поле на Product, отдельной сущности Inventory с optimistic locking нет (осознанно).
+- **Product**: id, name, description, price (BigDecimal), quantity, category (`@ManyToOne`), seller (`@ManyToOne`→User, `seller_id` — именование совпадает с дефолтом Hibernate, явный `@JoinColumn` не нужен, проверено), images (`@OneToMany`→ProductImage, с `sortOrder` — галерея, не одна картинка). Остатки (`quantity`) — прямое поле на Product, отдельной сущности Inventory с optimistic locking нет (осознанно). `price > 0` / `quantity >= 0` защищены не только DTO-валидацией, но и CHECK-constraint'ами на уровне БД (`chk_product_price_positive`, `chk_product_quantity_non_negative`, changeset `012-add-product-constraints`, файл `005-add-product-constraints.sql`).
 - **ProductImage**: id, product (`@ManyToOne`), fileAsset (`@ManyToOne`→FileAsset), sortOrder
 - **FileAsset**: id, storageKey (unique), originalFileName, contentType, uploadedBy (`@ManyToOne`→User), sizeBytes, category (enum FileCategory — задел на переиспользование не только для товаров, например для будущих аватаров)
 
@@ -106,6 +110,7 @@ service/          CategoryService, FileStorageService, ProductService,
 - `GET /api/products/{id}` — permitAll, 404 → `PRODUCT_NOT_FOUND`
 - `GET /api/products/mine` — защищено `@PreAuthorize("isAuthenticated()")` на самом методе контроллера (не URL-матчером в `SecurityConfig` — там этот путь формально подпадает под общий `permitAll` на `GET /api/products/**`, но метод-левел security всё равно требует реального логина)
 - `POST /api/products` (multipart, с фото) — `PRODUCT_CREATE`; `PATCH {id}`/`DELETE {id}` — `PRODUCT_MANAGE` + проверка владения (см. выше)
+- `POST /api/products/{id}/images` (multipart, добавить фото), `DELETE /api/products/{id}/images/{fileAssetId}` (удалить одну), `PATCH /api/products/{id}/images/order` (JSON-массив `fileAssetId` в новом порядке) — все три `PRODUCT_MANAGE` + проверка владения, добавлены 12.10.2026. `{fileAssetId}` в путях — это id `FileAsset` (то же число, что в `ProductDTO.imageIds` и в `/api/files/{id}`), не внутренний id строки `ProductImage` — у клиента никогда и не было повода знать про существование `ProductImage`. Лимит — 10 картинок на товар (константа в `ProductServiceImpl`), превышение → `ILLEGAL_STATE`. Подключены на фронте в `ProductManager.tsx` (миниатюры с крестиком-удалить и стрелками переставить порядок) 15.10.2026 — до этого бэкенд существовал, а UI не было вообще.
 - `GET /api/files/{id}` — permitAll, отдаёт сырые байты файла с правильным Content-Type напрямую как `<img src>` — MinIO при этом остаётся полностью закрытым от внешнего мира, бэкенд единственная точка доступа
 
 CORS не настроен — фронт работает через относительный `baseURL: '/api'` в axios, в dev-режиме рассчитан на Vite-прокси `/api → localhost:8080` (см. `frontend/vite.config.ts`), в проде — через тот же домен за nginx.
@@ -121,13 +126,25 @@ src/
 │               HomeRedirect.tsx, roles.ts, authEvents.ts
 ├── components/ ActionIcons, AuthCard, CategoryManager, DashboardLayout,
 │               DecorativeIcons, FieldIcons, FiltersBar, FormField,
-│               LanguageSwitcher, ProductCard, ProductGrid, ProductManager,
-│               PublicLayout, Spinner, SubmitButton
+│               LanguageSwitcher, Logo, ProductCard, ProductGrid,
+│               ProductManager, PublicLayout, Spinner, SubmitButton,
+│               ThemeToggle
+├── hooks/      useTheme.ts (светлая/тёмная тема, localStorage + системная по умолчанию)
 ├── locales/    en.json, ru.json (держать синхронными — одинаковое число ключей)
 └── pages/      LoginPage, RegisterPage, CatalogPage, ProductDetailPage,
                 BuyerDashboard, SellerDashboard, AdminDashboard
 ```
-Роутинг (`App.tsx`): `/login`, `/register`, `/products/:id` (публичная деталка товара), `/` → `HomeRedirect` (гости и BUYER видят публичный каталог `CatalogPage`, SELLER/ADMIN сразу редиректятся в свой дашборд), `/buyer` `/seller` `/admin` — защищённые по роли через `ProtectedRoute`. Токен — в `localStorage`.
+Роутинг (`App.tsx`): `/login`, `/register`, `/products/:id` (публичная деталка товара), `/` → `HomeRedirect` (гости и BUYER видят публичный каталог `CatalogPage`, SELLER/ADMIN сразу редиректятся в свой дашборд), `/buyer` `/seller` `/admin` — защищённые по роли через `ProtectedRoute`. Токен — в `localStorage`. **Просмотр каталога и карточки товара не требует логина ни на бэке (`permitAll` на `GET /api/products/**`), ни на фронте (эти роуты не обёрнуты в `ProtectedRoute`) — проверено 16.10.2026, регрессии не было.**
+
+### Дизайн-система и тёмная тема (добавлено 10–16.10.2026)
+
+Редизайн фронтенда с нуля, направление — «тёплый, тактильный маркетплейс», осознанный уход от generic-AI вида (фиолет/белый градиент, Inter везде).
+
+- **Цветовые токены** в `src/index.css` (`@theme` блок Tailwind 4): `brand-*` (ember-оранжевый — главный CTA: кнопки submit/«Добавить»/«Зарегистрироваться», цена товара), `accent-*` (тил — вторичное: ссылки, выделенные состояния, фокус-рамки; раньше был фиолетовым, цвета поменяли, имя класса оставили — поэтому старые `accent-500` и т.п. в коде это **не баг и не забытый рефактор**), `stone-*` (тёплый нейтральный, замена `slate`), плюс `success`/`warning`/`danger`.
+- **Семантические токены** (`surface-base/raised/sunken`, `content-primary/secondary/inverse`, `border-subtle/strong`) — единственный способ задавать фон/текст/рамки в компонентах, если нужна поддержка тёмной темы. Хардкодные `bg-white`/`text-slate-900` и т.п. **не используются** — если увидишь такой класс где-то в новом коде, это упущение, а не стиль проекта.
+- **Тёмная тема**: `@custom-variant dark (&:where(.dark, .dark *));` в `index.css` — `dark:`-утилиты Tailwind привязаны к явному классу `.dark`/`.light` на `<html>`, не только к `prefers-color-scheme`. Переключатель — `ThemeToggle.tsx` + `hooks/useTheme.ts` (localStorage, системная тема как дефолт при первом визите), стоит везде рядом с `LanguageSwitcher`. `brand`/`accent` как цвет текста (не фона кнопки) и светлые бейдж-фоны (`accent-50` и т.п.) почти везде имеют явный `dark:`-вариант — на тёмном фоне сами по себе нечитаемы/невидимы.
+- Шрифты: `font-heading` → Fraunces (variable, заголовки), `font-sans` → Plus Jakarta Sans (текст), подключены через Google Fonts в `index.html`.
+- **Не проверено визуально** (у Claude нет браузерного рендера в этой среде — пробовали подключить расширение Claude for Chrome к Claude Code, не вышло в рамках обычной сессии, нужен отдельный запуск с флагом `--chrome`): тёмная тема на реальном экране, мобильная адаптация ~375px. Это сделал на свой вкус по токенам и типам, но глазами не подтверждено — если что-то выглядит криво, разбираться по месту.
 
 ## Пройденные этапы (хронологически)
 
@@ -138,6 +155,9 @@ src/
 5. **Product-модуль (CRUD)** — `Product`/`ProductImage` (галерея, не одна картинка), права `PRODUCT_CREATE`/`PRODUCT_MANAGE`, проверка владения при update/delete
 6. **Публичный каталог** — фильтры (категория/поиск/цена/сортировка) через `Specification`, `GET /products/{id}`, `CatalogPage`/`ProductDetailPage`/`FiltersBar`/`ProductCard`/`ProductGrid` на `/`, `framer-motion`
 7. **Фикс лимитов загрузки фото** — nginx `client_max_body_size` + Spring multipart были 1MB, резали обычные фото с телефона; подняты до 10MB/файл, 50MB/запрос синхронно в nginx и Spring, добавлен `FILE_TOO_LARGE`, фронт отдельно обрабатывает голый 413 от nginx (до бэкенда не долетает, JSON-тела нет)
+8. **Управление картинками товара после создания** (12.10.2026, бэкенд) — до этого фото можно было загрузить только при создании товара, редактирование не трогало галерею вообще. Добавлены `addImages`/`removeImages`/`reorderImages` в `ProductServiceImpl` + три REST-эндпоинта (см. «Актуальные REST-пути»), новое исключение `ProductImageNotFoundException`, CHECK-constraint'ы на `price`/`quantity` (changeset `012`).
+9. **Редизайн фронтенда** (10–16.10.2026) — design-токены (`brand`/`accent`/`stone`, Fraunces+Plus Jakarta Sans), миграция `framer-motion`→`motion`, `Lenis`-скролл, `@formkit/auto-animate` на списках категорий/товаров, новый `Logo`-компонент (кликабельный, ведёт на `/` из любого места), полноценная тёмная тема с явным тогглом. Подробности — в разделе «Дизайн-система и тёмная тема» выше.
+10. **Фронтенд подключён к Product-image эндпоинтам** (15.10.2026) — `ProductManager.tsx` получил UI редактирования галереи (добавить/удалить/переставить фото), закрыв разрыв, оставшийся после шага 8.
 
 ## Архитектурные соглашения (держать консистентными)
 
@@ -161,4 +181,6 @@ src/
 - **Бэкапы БД** — начинали настраивать выгрузку `pg_dump` в MinIO с retention в неделю через lifecycle-правило бакета, остановились на том, что `minio/mc` не тянулся с Docker Hub — нужно поискать альтернативный путь.
 - **TLS/домен** — сознательно отложено, домена ещё нет.
 - Admin-модерация чужих товаров (не через `/products/mine`) на фронте не сделана — только своя витрина продавца.
+- **Визуальная проверка редизайна (тёмная тема, мобильная адаптация ~375px) не сделана** — Claude сделал по токенам/типам без браузерного рендера, пользователь ещё не смотрел глазами целиком. Если что-то выглядит криво — не удивляться, разбираться по месту.
+- На момент последней правки этого файла (16.10.2026) ветки `frontend-design`, `frontend-animations`, `frontend-logo` уже смержены в `main`; **открыта и не смержена** `frontend-product-images` (UI управления фото товара) — пользователь просил не мержить фронтенд-ветки без явного "мержи", сам смотрит и решает. **Не доверять этому статусу дальше одной сессии** — сверяться с `git branch -r`/`gh pr list`/GitHub UI перед тем как на него опираться, он устареет быстрее всего в файле.
 - Дальше двигаемся по шагам, которые пользователь выбирает сам в начале каждой сессии — не предполагать заранее, что "следующий шаг" — это то-то, спросить.

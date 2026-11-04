@@ -108,6 +108,11 @@
     "subtitle": "Everything currently listed on MiniMarket.",
     "priceValue": "${{price}}",
     "empty": "No products match your filters.",
+    "stats": {
+      "stock": "{{count}} in stock",
+      "orders": "Ordered {{count}} times",
+      "favorites": "Favorited {{count}} times"
+    },
     "header": {
       "login": "Log in",
       "register": "Register",

@@ -108,6 +108,11 @@
     "subtitle": "Все товары, доступные сейчас на MiniMarket.",
     "priceValue": "{{price}}$",
     "empty": "По вашим фильтрам ничего не найдено.",
+    "stats": {
+      "stock": "В наличии: {{count}}",
+      "orders": "Заказано: {{count}}",
+      "favorites": "В избранном: {{count}}"
+    },
     "header": {
       "login": "Войти",
       "register": "Регистрация",

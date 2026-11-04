@@ -9,6 +9,9 @@ import com.own.ownproject.mapper.ProductMapper;
 import com.own.ownproject.payload.CreateProductDTO;
 import com.own.ownproject.payload.ProductDTO;
 import com.own.ownproject.repository.CategoryRepository;
+import com.own.ownproject.repository.FavoriteRepository;
+import com.own.ownproject.repository.OrderItemRepository;
+import com.own.ownproject.repository.ProductCountProjection;
 import com.own.ownproject.repository.ProductRepository;
 import com.own.ownproject.repository.UserRepository;
 import com.own.ownproject.service.FileStorageService;
@@ -28,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,12 +46,35 @@ public class ProductServiceImpl implements ProductService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final FileStorageService fileStorageService;
+    private final FavoriteRepository favoriteRepository;
+    private final OrderItemRepository orderItemRepository;
 
     @Override
     @Transactional(readOnly = true)
     public Page<ProductDTO> getProducts(Pageable pageable, Long categoryId, String search, BigDecimal minPrice, BigDecimal maxPrice) {
         Specification<Product> spec = buildProductSpecification(categoryId, search, minPrice, maxPrice);
-        return productRepository.findAll(spec, pageable).map(productMapper::toProductDTO);
+        Page<ProductDTO> page = productRepository.findAll(spec, pageable).map(productMapper::toProductDTO);
+        enrichWithCounts(page.getContent());
+        return page;
+    }
+
+    // Batched per page/detail-call instead of counting per product, which would
+    // otherwise be two extra queries per card on every catalog page (N+1).
+    private void enrichWithCounts(List<ProductDTO> products) {
+        if (products.isEmpty()) {
+            return;
+        }
+        List<Long> ids = products.stream().map(ProductDTO::getId).toList();
+
+        Map<Long, Long> favoriteCounts = favoriteRepository.countByProductIdIn(ids).stream()
+                .collect(Collectors.toMap(ProductCountProjection::getProductId, ProductCountProjection::getCount));
+        Map<Long, Long> orderCounts = orderItemRepository.countByProductIdIn(ids).stream()
+                .collect(Collectors.toMap(ProductCountProjection::getProductId, ProductCountProjection::getCount));
+
+        for (ProductDTO product : products) {
+            product.setFavoritesCount(favoriteCounts.getOrDefault(product.getId(), 0L));
+            product.setOrdersCount(orderCounts.getOrDefault(product.getId(), 0L));
+        }
     }
 
     private Specification<Product> buildProductSpecification(Long categoryId, String search, BigDecimal minPrice, BigDecimal maxPrice) {
@@ -136,7 +163,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public ProductDTO getProductById(Long id, Authentication authentication) {
-        return productMapper.toProductDTO(findByIdOrThrow(id));
+        ProductDTO dto = productMapper.toProductDTO(findByIdOrThrow(id));
+        enrichWithCounts(List.of(dto));
+        return dto;
     }
 
     @Override
