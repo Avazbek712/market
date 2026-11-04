@@ -10,6 +10,7 @@ interface CartContextValue {
   addToCart: (productId: number, quantity?: number) => Promise<void>
   updateQuantity: (productId: number, quantity: number) => Promise<void>
   removeFromCart: (productId: number) => Promise<void>
+  refreshCart: () => Promise<void>
 }
 
 const EMPTY_CART: Cart = { items: [], total: 0 }
@@ -70,10 +71,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
     await withPending(productId, () => cartApi.removeCartItem(productId))
   }
 
+  // Checkout clears the cart server-side without going through any of the
+  // per-item mutations above, so callers (checkout button) refetch explicitly.
+  async function refreshCart() {
+    if (!eligible) return
+    const result = await cartApi.getCart()
+    setCart(result)
+  }
+
   const itemCount = useMemo(() => cart.items.reduce((sum, item) => sum + item.quantity, 0), [cart])
 
   const value = useMemo<CartContextValue>(
-    () => ({ cart, itemCount, pendingProductIds, addToCart, updateQuantity, removeFromCart }),
+    () => ({ cart, itemCount, pendingProductIds, addToCart, updateQuantity, removeFromCart, refreshCart }),
     [cart, itemCount, pendingProductIds],
   )
 

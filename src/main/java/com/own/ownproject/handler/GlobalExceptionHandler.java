@@ -91,6 +91,12 @@ public class GlobalExceptionHandler {
         return buildResponse(exception.getHttpStatus(), "PRODUCT_IMAGE_NOT_FOUND");
     }
 
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<?> handleOrderNotFound(OrderNotFoundException exception) {
+        log.warn("Order not found: {}", exception.getMessage());
+        return buildResponse(exception.getHttpStatus(), "ORDER_NOT_FOUND");
+    }
+
     @ExceptionHandler(FileStorageException.class)
     public ResponseEntity<?> handleFileStorageException(FileStorageException exception) {
         log.warn("File storage error: {}", exception.getMessage(), exception);

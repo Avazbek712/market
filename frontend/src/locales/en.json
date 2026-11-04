@@ -67,6 +67,9 @@
     "FILE_STORAGE_ERROR": "Something went wrong with the file upload.",
     "FILE_TOO_LARGE": "Images are too large: up to 10 MB each and 50 MB in total.",
     "MAX_IMAGES_EXCEEDED": "A product can have up to 10 photos.",
+    "ORDER_NOT_FOUND": "Order not found.",
+    "CART_EMPTY": "Your cart is empty.",
+    "INSUFFICIENT_STOCK": "Not enough stock — check the quantities in your cart.",
     "GENERIC": "Something went wrong, please try again."
   },
   "favorites": {
@@ -79,7 +82,26 @@
     "remove": "Remove",
     "total": "Total",
     "empty": "Your cart is empty.",
-    "loading": "Loading cart…"
+    "loading": "Loading cart…",
+    "checkout": "Checkout",
+    "checkingOut": "Placing order…"
+  },
+  "orders": {
+    "title": "My orders",
+    "empty": "No orders yet.",
+    "loading": "Loading orders…",
+    "total": "Total",
+    "orderNumber": "Order #{{id}}",
+    "paymentStatus": {
+      "UNPAID": "Unpaid",
+      "PAID": "Paid"
+    },
+    "itemStatus": {
+      "PENDING": "Pending",
+      "SHIPPED": "Shipped",
+      "DELIVERED": "Delivered",
+      "CANCELLED": "Cancelled"
+    }
   },
   "catalog": {
     "title": "Browse products",
